@@ -2,7 +2,6 @@ package com.example.nbe233team9.domain.chat.entity
 
 import com.example.nbe233team9.domain.user.model.User
 import jakarta.persistence.*
-import java.awt.TrayIcon.MessageType
 import java.time.LocalDateTime
 
 @Entity

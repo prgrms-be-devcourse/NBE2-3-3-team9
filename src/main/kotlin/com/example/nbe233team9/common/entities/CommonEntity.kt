@@ -14,10 +14,10 @@ abstract class CommonEntity {
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.MIN
+    var createdAt: LocalDateTime = LocalDateTime.MIN
 
     @LastModifiedDate
     @Column(nullable = false)
-    val updatedAt: LocalDateTime = LocalDateTime.MIN
+    var updatedAt: LocalDateTime = LocalDateTime.MIN
 }
 

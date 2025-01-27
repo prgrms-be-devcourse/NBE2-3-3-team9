@@ -1,4 +1,7 @@
 package com.example.nbe233team9.domain.user.dto
 
-class AdminResponseDTO {
-}
+data class AdminResponseDTO(
+    val email: String,
+    val name: String,
+    val profileImg: String?
+)

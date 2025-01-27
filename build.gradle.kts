@@ -48,6 +48,8 @@ dependencies {
 
     implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1")
 
+    implementation("org.modelmapper:modelmapper:3.1.1") // ModelMapper 의존성 추가
+
 }
 
 kotlin {

@@ -1,4 +1,4 @@
-package com.example.nbe233team9.domain.chat.config
+package com.example.nbe233team9.common.config
 
 import com.example.nbe233team9.domain.chat.service.RedisMessageSubscriber
 import com.fasterxml.jackson.databind.ObjectMapper

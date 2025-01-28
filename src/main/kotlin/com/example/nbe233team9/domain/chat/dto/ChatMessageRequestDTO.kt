@@ -15,5 +15,9 @@ class ChatMessageRequestDTO (
     var roomId: String,
 
     var receivedId: Long? = null
-){
-}
+)
+
+/**
+ * service에서 system 메시지 (입장 및 퇴장)을 처리해주니까
+ * createWithType 메서드는 삭제함
+ */

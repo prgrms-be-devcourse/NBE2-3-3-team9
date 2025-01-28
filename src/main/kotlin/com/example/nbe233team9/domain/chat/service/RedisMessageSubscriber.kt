@@ -5,6 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
 
+/**
+ * Redis에서 메시지를 구독하고,
+ * 수신된 메시지를 JSON으로 역직렬화한 후,
+ * WebSocket을 통해 클라이언트로 전달함
+ * (redis와 WebSocket 사이에서 메시지 브로커 역할을 함)
+ */
 class RedisMessageSubscriber (
     private val objectMapper: ObjectMapper, // JSON 역직렬화
     private val messagingTemplate: SimpMessagingTemplate // WebSocket 메시지 전송
@@ -16,7 +22,8 @@ class RedisMessageSubscriber (
     }
 
     /**
-     * Redis로부터 수신한 메시지 처리
+     * Redis로부터 메시지가 들어오면 호출됨
+     * 메시지를 역직렬화해서 sendToWebSocket으로 전달함
      */
     fun handleMessage(message: String) {
         try {
@@ -28,7 +35,8 @@ class RedisMessageSubscriber (
     }
 
     /**
-     * WebSocket으로 메시지 전송 (재시도 포함)
+     * WebSocket을 통해 특정 topic에 전송하여
+     * 해당 경로를 구독 중인 클라이언트가 해당 메시지를 수신할 수 있도록 함
      */
     private fun sendToWebSocket(chatMessage: ChatMessageResponseDTO) {
         var attempt = 0

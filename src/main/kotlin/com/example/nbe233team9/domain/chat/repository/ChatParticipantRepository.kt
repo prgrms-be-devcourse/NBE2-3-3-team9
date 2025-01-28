@@ -18,10 +18,10 @@ interface ChatParticipantRepository : JpaRepository<ChatParticipant, Long> {
     fun findByUserAndChatRoom(user: User, chatRoom: ChatRoom): Optional<ChatParticipant>
 
     // 특정 채팅방에 참여 중인 관리자 목록 조회
-    fun findByChatRoomAndIsAdminTrue(chatRoom: ChatRoom): List<ChatParticipant>
+    fun findByChatRoomAndAdminTrue(chatRoom: ChatRoom): List<ChatParticipant>
 
     // 채팅방에서 활성 상태인 관리자의 수를 반환
-    fun countByChatRoomAndIsAdminTrueAndIsActiveTrue(chatRoom: ChatRoom): Long
+    fun countByChatRoomAndAdminTrueAndActiveTrue(chatRoom: ChatRoom): Long
 
     // 사용자가 참여 중인 채팅방 ID 목록 조회
     @Query("SELECT cp.chatRoom.roomId FROM ChatParticipant cp WHERE cp.user.id = :userId AND cp.isActive = true")

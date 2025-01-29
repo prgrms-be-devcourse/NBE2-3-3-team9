@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "chat_messages")
-class ChatMessage (
+data class ChatMessage (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -26,6 +26,10 @@ class ChatMessage (
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     var type: MessageType,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    var chatRoom: ChatRoom,
 
     @Column(name = "sent_at", nullable = false)
     var sentAt: LocalDateTime = LocalDateTime.now()

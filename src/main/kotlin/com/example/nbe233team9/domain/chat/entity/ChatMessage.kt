@@ -28,7 +28,7 @@ data class ChatMessage (
     var type: MessageType,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
+    @JoinColumn(name = "room_id", referencedColumnName = "room_id", nullable = false)
     var chatRoom: ChatRoom,
 
     @Column(name = "sent_at", nullable = false)

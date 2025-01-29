@@ -1,48 +1,58 @@
 package com.example.nbe233team9.domain.pet.model
 
+import com.example.nbe233team9.common.entities.CommonEntity
+import com.example.nbe233team9.domain.animal.model.Breed
+import com.example.nbe233team9.domain.animal.model.Species
+import com.example.nbe233team9.domain.animal.repository.BreedRepository
+import com.example.nbe233team9.domain.animal.repository.SpeciesRepository
+import com.example.nbe233team9.domain.pet.dto.PetDTO
+import com.example.nbe233team9.domain.user.model.User
 import jakarta.persistence.*
 
 @Entity
-class Pet(
+class Pet (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    val id: Long = 0,
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    val user: User,
+
+    @ManyToOne
+    @JoinColumn(name = "species_id", nullable = false)
+    var species: Species,
+
+    @ManyToOne
+    @JoinColumn(name = "breed_id", nullable = false)
+    var breed: Breed,
 
     @Column(nullable = false)
-    val userId: Long,
-
-    @Column(nullable = false)
-    val speciesId: Long,
-
-    @Column(nullable = false)
-    val breedId: Long,
-
-    @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = true)
-    val age: String? = null,
+    var age: String? = null,
 
     @Column(nullable = true)
-    val picture: String? = null,
+    var picture: String? = null,
 
     @Column(nullable = false)
-    val gender: String
-) {
+    var gender: String
+) : CommonEntity() {
 
 
-//    fun updatePet(
-//        request: PetDTO.UpdatePetDTO,
-//        spRepo: SpeciesRepository,
-//        brRepo: BreedRepository,
-//        Picture: String?
-//    ): Pet {
-//        this.species = spRepo.findById(request.getSpeciesId()).orElseThrow { RuntimeException() }
-//        this.breed = brRepo.findById(request.getBreedId()).orElseThrow { RuntimeException() }
-//        this.name = request.getName()
-//        this.age = request.getAge()
-//        this.gender = request.getGender()
-//        this.picture = Picture
-//        return this
-//    }
+    fun updatePet(
+        request: PetDTO.UpdatePetDTO,
+        spRepo: SpeciesRepository,
+        brRepo: BreedRepository,
+        picture: String?
+    ): Pet {
+        this.species = spRepo.findById(request.speciesId).orElseThrow { RuntimeException() }
+        this.breed = brRepo.findById(request.breedId).orElseThrow { RuntimeException() }
+        this.name = request.name
+        this.age = request.age
+        this.gender = request.gender
+        this.picture = picture
+        return this
+    }
 }

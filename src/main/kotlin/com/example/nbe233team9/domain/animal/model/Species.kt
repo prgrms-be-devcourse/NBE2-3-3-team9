@@ -9,7 +9,7 @@ import jakarta.persistence.Id
 class Species(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    val id: Long = 0,
 
     var name: String
 ) {

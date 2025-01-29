@@ -2,7 +2,7 @@ package com.example.nbe233team9.domain.chat.dto
 
 import java.time.LocalDateTime
 
-class ChatRoomeResponseDTO (
+class ChatRoomResponseDTO (
     val roomId: String,                  // 채팅방 ID
     val roomName: String,                // 채팅방 이름
     val description: String,             // 채팅방 설명

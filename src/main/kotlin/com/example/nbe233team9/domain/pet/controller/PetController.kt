@@ -2,29 +2,45 @@ package com.example.nbe233team9.domain.pet.controller
 
 import com.example.nbe233team9.common.response.ApiResponse
 import com.example.nbe233team9.domain.pet.dto.PetDTO
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import com.example.nbe233team9.domain.pet.service.PetService
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api")
-class PetController {
+class PetController(
+    private val petService: PetService
+) {
+    @GetMapping("/pets")
     fun findPets(): ApiResponse<List<PetDTO>> {
-        return ApiResponse.ok(null);
+        val pets = petService.findPets(4L);
+        return ApiResponse.ok(pets);
     }
 
-    fun getPetDetails(): ApiResponse<PetDTO> {
-        return ApiResponse.ok(null);
+    @GetMapping("/pets/{petId}")
+    fun getPetDetails(@PathVariable petId: Long): ApiResponse<PetDTO> {
+        val pet = petService.getPetDetails(4L, petId)
+        return ApiResponse.ok(pet);
     }
 
-    fun addPets(): ApiResponse<PetDTO> {
-        return ApiResponse.ok(null);
+    @PostMapping(value = ["/pet"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun addPets(@RequestPart(value = "dto" ) request: PetDTO.AddPetDTO,
+                @RequestPart(value = "file", required = false ) file: MultipartFile?): ApiResponse<PetDTO> {
+        val pet = petService.addPet(request, file, 4L)
+        return ApiResponse.ok(pet);
     }
 
-    fun updatePets(): ApiResponse<PetDTO> {
-        return ApiResponse.ok(null);
+    @PutMapping(value = ["/pet/{petId}"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun updatePets(@RequestPart(value = "dto" ) request: PetDTO.UpdatePetDTO,
+                   @RequestPart(value = "file", required = false ) file: MultipartFile?): ApiResponse<PetDTO> {
+        val pet = petService.updatePet(request, file, 4L)
+        return ApiResponse.ok(pet);
     }
 
-    fun deletePets() {
-
+    @DeleteMapping("/pet/{petId}")
+    fun deletePets(@PathVariable petId: Long): ApiResponse<String> {
+        petService.deletePet(petId)
+        return ApiResponse.ok("펫 삭제 성공")
     }
 }

@@ -6,7 +6,7 @@ import jakarta.persistence.*
 class Breed(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    val id: Long = 0,
 
     @ManyToOne
     @JoinColumn(name = "species_id")

@@ -1,12 +1,11 @@
 package com.example.nbe233team9.domain.community.controller
 
+import com.example.nbe233team9.common.response.ApiResponse
 import com.example.nbe233team9.domain.auth.security.CustomUserDetails
 import com.example.nbe233team9.domain.community.dto.CommentRequestDTO
 import com.example.nbe233team9.domain.community.dto.CommentResponseDTO
 import com.example.nbe233team9.domain.community.dto.LikeResponseDTO
 import com.example.nbe233team9.domain.community.service.CommentService
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -25,9 +24,9 @@ class CommentController(
         @PathVariable postingId: Long,
         @RequestParam(required = false) parentId: Long?,
         @RequestBody commentRequestDTO: CommentRequestDTO
-    ): ResponseEntity<CommentResponseDTO> {
+    ): ApiResponse<CommentResponseDTO> {
         val commentResponseDTO = commentService.createComment(userId, postingId, parentId, commentRequestDTO)
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentResponseDTO)
+        return ApiResponse.created(commentResponseDTO)
     }
 
     @PutMapping("/comments/{commentId}")
@@ -35,16 +34,16 @@ class CommentController(
     fun updateComment(
         @PathVariable commentId: Long,
         @RequestBody commentRequestDTO: CommentRequestDTO
-    ): ResponseEntity<CommentResponseDTO> {
+    ): ApiResponse<CommentResponseDTO> {
         val commentResponseDTO = commentService.updateComment(commentId, commentRequestDTO)
-        return ResponseEntity.ok(commentResponseDTO)
+        return ApiResponse.ok(commentResponseDTO)
     }
 
     @DeleteMapping("/comments/{commentId}")
     //@PreAuthorize("hasRole('USER')")
-    fun deleteComment(@PathVariable commentId: Long): ResponseEntity<Void> {
+    fun deleteComment(@PathVariable commentId: Long): ApiResponse<String> {
         commentService.deleteComment(commentId)
-        return ResponseEntity.noContent().build()
+        return ApiResponse.ok("댓글 삭제 성공")
     }
 
     @PostMapping("/like/{postingId}")
@@ -53,9 +52,9 @@ class CommentController(
         //@AuthenticationPrincipal userDetails: CustomUserDetails,
         userId : Long,
         @PathVariable postingId: Long
-    ): ResponseEntity<LikeResponseDTO> {
+    ): ApiResponse<LikeResponseDTO> {
         val likeResponseDTO = commentService.createLike(userId, postingId)
-        return ResponseEntity.status(HttpStatus.CREATED).body(likeResponseDTO)
+        return ApiResponse.created(likeResponseDTO)
     }
 
     @DeleteMapping("/like/{postingId}")
@@ -64,9 +63,9 @@ class CommentController(
         //@AuthenticationPrincipal userDetails: CustomUserDetails,
         userId : Long,
         @PathVariable postingId: Long
-    ): ResponseEntity<Void> {
+    ): ApiResponse<String> {
         commentService.deleteLike(userId, postingId)
-        return ResponseEntity.noContent().build()
+        return ApiResponse.ok("좋아요 삭제 성공")
     }
 
     @GetMapping("/comments/{parentId}/replies")
@@ -74,8 +73,8 @@ class CommentController(
         //@AuthenticationPrincipal userDetails: CustomUserDetails,
         userId : Long,
         @PathVariable parentId: Long
-    ): ResponseEntity<List<CommentResponseDTO>> {
+    ): ApiResponse<List<CommentResponseDTO>> {
         val replies = commentService.getReplies(userId, parentId)
-        return ResponseEntity.ok(replies)
+        return ApiResponse.ok(replies)
     }
 }

@@ -9,6 +9,9 @@ import com.example.nbe233team9.domain.chat.repository.ChatMessageRepository
 import com.example.nbe233team9.domain.chat.repository.ChatRoomRepository
 import com.example.nbe233team9.domain.user.model.User
 import com.example.nbe233team9.domain.user.repository.UserRepository
+import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_EMAIL
+import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_ID
+import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_NAME
 import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
@@ -30,9 +33,6 @@ class RedisMessagePublisher(
     companion object {
         private const val MAX_RETRIES = 3 // 최대 재시도 횟수
         private const val INITIAL_RETRY_DELAY_MS = 1000L // 초기 대기 시간 1초
-        private const val SYSTEM_USER_ID = 0L
-        private const val SYSTEM_USER_NAME = "SYSTEM"
-        private const val SYSTEM_USER_EMAIL = "system@anicare.com"
     }
 
     /**

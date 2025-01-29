@@ -7,7 +7,7 @@ import java.util.*
 
 @Entity
 @Table(name = "chat_rooms")
-class ChatRoom (
+data class ChatRoom (
 
     // 채팅방 고유 ID
     @Id

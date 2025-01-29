@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "chat_participants")
-class ChatParticipant (
+data class ChatParticipant (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

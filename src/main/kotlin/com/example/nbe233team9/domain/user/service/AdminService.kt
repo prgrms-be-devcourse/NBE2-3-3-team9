@@ -4,6 +4,7 @@ import com.example.nbe233team9.common.exception.CustomException
 import com.example.nbe233team9.common.exception.ResultCode
 import com.example.nbe233team9.domain.user.dto.AdminResponseDTO
 import com.example.nbe233team9.domain.user.dto.CreateAdminDTO
+import com.example.nbe233team9.domain.user.dto.UpdateAdminDTO
 import com.example.nbe233team9.domain.user.model.Role
 import com.example.nbe233team9.domain.user.model.User
 import com.example.nbe233team9.domain.user.repository.UserRepository
@@ -49,6 +50,29 @@ class AdminService(
         // 필요한 데이터만 반환 (현재 User 객체를 반환)
         return user
     }
+
+    fun adminUpdate(id: Long, updateAdminDTO: UpdateAdminDTO): String {
+        val user = userRepository.findById(id).orElseThrow { RuntimeException("사용자를 찾을 수 없습니다.") }
+
+        val updatedUser = user.copy(
+            name = updateAdminDTO.name ?: user.name,
+            password = updateAdminDTO.password ?: user.password,
+            profileImg = updateAdminDTO.profileImg ?: user.profileImg,
+            email = updateAdminDTO.email ?: user.email,
+//            pets = user.pets,
+//            refreshtoken = user.refreshtoken,
+//            chatMessages = user.chatMessages,
+//            chatRooms = user.chatRooms,
+            socialAccessToken = user.socialAccessToken,
+            yearsOfExperience = user.yearsOfExperience,
+            role = user.role,
+//            communities = user.communities
+        )
+
+        userRepository.save(updatedUser)
+        return "업데이트 성공"
+    }
+
 
 
 }

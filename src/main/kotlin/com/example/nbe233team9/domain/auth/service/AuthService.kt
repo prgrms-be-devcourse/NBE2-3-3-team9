@@ -2,10 +2,12 @@ package com.example.nbe233team9.domain.auth.service
 
 import com.example.nbe233team9.common.exception.CustomException
 import com.example.nbe233team9.common.exception.ResultCode
+import com.example.nbe233team9.domain.auth.dto.TokenResponseDTO
 import com.example.nbe233team9.domain.auth.security.JwtTokenProvider
 import com.example.nbe233team9.domain.user.dto.LoginAdminDTO
 import com.example.nbe233team9.domain.user.repository.UserRepository
 import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import lombok.AllArgsConstructor
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -18,6 +20,7 @@ class AuthService (
     private val passwordEncoder: PasswordEncoder,
     private val jwtTokenProvider: JwtTokenProvider
 ) {
+
 
 
     fun login(loginAdminDTO: LoginAdminDTO, response: HttpServletResponse): Map<String, Any> {
@@ -57,6 +60,66 @@ class AuthService (
         )
 
     }
+
+
+    fun logout(userId: Long, response: HttpServletResponse): String {
+        // 1. 사용자 조회
+        val user = userRepository.findById(userId).orElseThrow {
+            throw NoSuchElementException("해당 ID의 사용자를 찾을 수 없습니다.")
+        }
+
+        // 2. RefreshToken 초기화
+        val updatedUser = user.copy(refreshToken = null) // 복사하여 refreshtoken만 변경
+
+        userRepository.save(updatedUser)
+
+        // 3. Cookie에서 RefreshToken 삭제
+        val cookie = Cookie("REFRESHTOKEN", null).apply {
+            domain = "localhost"
+            path = "/"
+            maxAge = 0 // 쿠키 만료 시간 0으로 설정
+        }
+        response.addCookie(cookie)
+
+        // 4. 성공 결과 반환
+        return "로그아웃 성공"
+    }
+
+    fun reCreateToken(request: HttpServletRequest): TokenResponseDTO {
+        val cookies = request.cookies ?: throw CustomException(ResultCode.TOKEN_EXPIRED)
+
+        var userId = 0L
+        var refreshToken: String? = null
+
+        // 쿠키에서 refreshToken과 userId 추출
+        for (cookie in cookies) {
+            if (cookie.name ==  "REFRESHTOKEN") {
+                refreshToken = cookie.value
+                userId = jwtTokenProvider.getId(refreshToken)
+            }
+        }
+
+        if (refreshToken.isNullOrEmpty() || userId == 0L) {
+            throw CustomException(ResultCode.TOKEN_EXPIRED)
+        }
+
+        // DB에서 사용자 조회 및 refreshToken 검증
+        val user = userRepository.findById(userId)
+            .orElseThrow { CustomException(ResultCode.NOT_EXISTS_USER) }
+
+        if (!passwordEncoder.matches(refreshToken, user.refreshToken)) {
+            throw CustomException(ResultCode.INVALID_TOKEN)
+        }
+
+        // accessToken 재발급
+        val newAccessToken = jwtTokenProvider.createToken(userId)
+
+        return TokenResponseDTO(newAccessToken)
+    }
+
+
+
+
 
 
 

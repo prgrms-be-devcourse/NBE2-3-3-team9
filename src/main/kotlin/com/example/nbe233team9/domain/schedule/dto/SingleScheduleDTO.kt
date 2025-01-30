@@ -1,16 +1,8 @@
 package com.example.nbe233team9.domain.schedule.dto
 
-import lombok.AllArgsConstructor
-import lombok.Builder
-import lombok.Getter
-import lombok.NoArgsConstructor
+import com.example.nbe233team9.domain.schedule.model.SingleSchedule
 import java.time.LocalDateTime
 
-
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 class SingleScheduleDTO(
     val id: Long,
     val petId: Long,
@@ -36,12 +28,30 @@ class SingleScheduleDTO(
 
 
     class UpdateSingleScheduleDTO(
-        private val id: Long,
-        private val petId: Long,
-        private val name: String,
-        private val startDatetime: LocalDateTime,
-        private val endDatetime: LocalDateTime,
-        private val petName: String? = null
+        val id: Long,
+        val petId: Long,
+        val name: String,
+        val startDatetime: LocalDateTime,
+        val endDatetime: LocalDateTime,
+        val petName: String? = null
     ) {
+    }
+
+    companion object {
+        fun fromEntity(singleSchedule: SingleSchedule): SingleScheduleDTO {
+            return SingleScheduleDTO(
+                id = singleSchedule.id,
+                userId = singleSchedule.user.id!!,
+                petId = singleSchedule.pet.id,
+                petName = singleSchedule.pet.name,
+                name = singleSchedule.pet.name,
+                periodicScheduleId = singleSchedule.periodicSchedule?.id,
+                startDatetime = singleSchedule.startDatetime,
+                endDatetime = singleSchedule.endDatetime,
+                notificatedAt = singleSchedule.notificatedAt,
+                createdAt = singleSchedule.createdAt,
+                updatedAt = singleSchedule.updatedAt
+            )
+        }
     }
 }

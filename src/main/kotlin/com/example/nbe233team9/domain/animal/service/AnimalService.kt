@@ -24,7 +24,7 @@ class AnimalService(
         if (createAnimalDTO.breedName != null) {
             if (species != null) {
                 // 이미 종과 품종 존재
-                if (breedRepository.existsByNameAndSpecies(createAnimalDTO.breedName, species)) {
+                if (breedRepository.existsByNameAndSpecies(createAnimalDTO.breedName!!, species!!)) {
                     throw CustomException(ResultCode.DUPLICATE_SPECIES_AND_BREED)
                 } else { // 종만 존재 -> 품종만 추가
                     val breed = Breed(

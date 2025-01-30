@@ -6,8 +6,11 @@ import jakarta.persistence.*
 import lombok.NoArgsConstructor
 
 @Entity
-@NoArgsConstructor
 class Comment(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
+
     @ManyToOne
     @JoinColumn(name = "community_id")
     val community: Community,
@@ -22,10 +25,6 @@ class Comment(
     @JoinColumn(name = "parent_id")
     val parent: Comment? = null
 ) : CommonEntity() {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
 
     fun updateContent(newContent: String) {
         this.content = newContent

@@ -2,11 +2,11 @@ package com.example.nbe233team9.domain.schedule.repository
 
 import com.example.nbe233team9.domain.schedule.model.PeriodicSchedule
 import com.example.nbe233team9.domain.schedule.model.SingleSchedule
+import com.example.nbe233team9.domain.user.model.User
 import io.lettuce.core.dynamic.annotation.Param
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
-import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -23,7 +23,7 @@ interface SingleScheduleRepository : JpaRepository<SingleSchedule, Long> {
     fun findPeriodicScheduleById(singleScheduleId: Long): PeriodicSchedule
 
     @Query("select count(s) from SingleSchedule s where s.periodicSchedule = :periodicSchedule")
-    fun countByPeriodicScheduleId(periodicSchedule: PeriodicSchedule): Long
+    fun countByPeriodicScheduleId(periodicSchedule: PeriodicSchedule): Int
 
     @Query("SELECT s FROM SingleSchedule s WHERE s.startDatetime BETWEEN :now AND :tenMinutesLater AND s.notificatedAt IS NULL")
     fun findSchedulesWithinNextTenMinutes(

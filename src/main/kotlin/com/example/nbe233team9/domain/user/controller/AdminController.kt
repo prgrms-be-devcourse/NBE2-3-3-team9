@@ -4,6 +4,7 @@ import com.example.nbe233team9.common.response.ApiResponse
 import com.example.nbe233team9.domain.auth.security.CustomUserDetails
 import com.example.nbe233team9.domain.user.dto.AdminResponseDTO
 import com.example.nbe233team9.domain.user.dto.CreateAdminDTO
+import com.example.nbe233team9.domain.user.dto.UpdateAdminDTO
 import com.example.nbe233team9.domain.user.model.User
 import com.example.nbe233team9.domain.user.service.AdminService
 import io.swagger.v3.oas.annotations.Operation
@@ -41,6 +42,16 @@ class AdminController(
         val user = adminService.adminInfo(userDetails.getUserId());
 
         return ApiResponse.ok(user);
+    }
+
+    @Operation(summary = "관리자 정보 수정")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun adminUpdate(
+        @AuthenticationPrincipal userDetails: CustomUserDetails,
+        @Valid @RequestBody updateAdminDTO: UpdateAdminDTO
+    ): ApiResponse<String> {
+        val result =adminService.adminUpdate(userDetails.getUserId(), updateAdminDTO)
+        return ApiResponse.ok(result)
     }
 
 

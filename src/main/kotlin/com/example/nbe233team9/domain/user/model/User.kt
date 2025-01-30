@@ -29,7 +29,7 @@ data class User(
     var socialAccessToken: String? = null, // Kakao AccessToken 저장
 
     @Column(nullable = false)
-    var yearsOfExperience: Int = 0,
+    var years_of_experience: Int = 0,
 
     @Column
     @JsonIgnore

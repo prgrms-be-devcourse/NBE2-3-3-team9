@@ -47,7 +47,7 @@ class AuthService (
             password = user.password,
             role = user.role,
             socialAccessToken = user.socialAccessToken,
-            yearsOfExperience = user.yearsOfExperience,
+            years_of_experience = user.years_of_experience,
             refreshToken = passwordEncoder.encode(refreshToken) // refreshToken 암호화 후 저장
         )
 

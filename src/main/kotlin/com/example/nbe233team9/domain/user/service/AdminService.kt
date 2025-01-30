@@ -64,7 +64,7 @@ class AdminService(
 //            chatMessages = user.chatMessages,
 //            chatRooms = user.chatRooms,
             socialAccessToken = user.socialAccessToken,
-            yearsOfExperience = user.yearsOfExperience,
+            years_of_experience =user.years_of_experience,
             role = user.role,
 //            communities = user.communities
         )

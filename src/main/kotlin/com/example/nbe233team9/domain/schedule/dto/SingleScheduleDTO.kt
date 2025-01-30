@@ -12,25 +12,25 @@ import java.time.LocalDateTime
 @AllArgsConstructor
 @Builder
 class SingleScheduleDTO(
-    private val id: Long,
-    private val petId: Long,
-    private val petName: String,
-    private val userId: Long,
-    private val name: String,
-    private val periodicScheduleId: Long? = null,
-    private val startDatetime: LocalDateTime,
-    private val endDatetime: LocalDateTime,
-    private val createdAt: LocalDateTime,
-    private val updatedAt: LocalDateTime,
-    private val notificatedAt: LocalDateTime? = null
+    val id: Long,
+    val petId: Long,
+    val petName: String,
+    val userId: Long,
+    val name: String,
+    val periodicScheduleId: Long? = null,
+    val startDatetime: LocalDateTime,
+    val endDatetime: LocalDateTime,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+    val notificatedAt: LocalDateTime? = null
 ) {
 
     class AddSingleScheduleDTO(
-        private val petId: Long,
-        private val name: String,
-        private val startDatetime: LocalDateTime,
-        private val endDatetime: LocalDateTime,
-        private val petName: String? = null
+        val petId: Long,
+        val name: String,
+        val startDatetime: LocalDateTime,
+        val endDatetime: LocalDateTime,
+        val petName: String? = null
     ) {
     }
 

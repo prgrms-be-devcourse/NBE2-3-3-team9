@@ -11,41 +11,41 @@ class PeriodicSchedule(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private var id: Long = 0,
+    val id: Long = 0,
 
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
-    private val pet: Pet,
+    val pet: Pet,
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private val user: User,
+    val user: User,
 
     @Column(name = "name", nullable = false)
-    private var name: String,
+    var name: String,
 
     @Column(name = "start_date", nullable = false)
-    private var startDate: LocalDate,
+    var startDate: LocalDate,
 
     @Column(name = "end_date", nullable = false)
-    private var endDate: LocalDate,
+    var endDate: LocalDate,
 
     @Column(name = "start_time", nullable = false)
-    private var startTime: LocalTime,
+    var startTime: LocalTime,
 
     @Column(name = "end_time", nullable = false)
-    private var endTime: LocalTime,
+    var endTime: LocalTime,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "repeat_pattern", nullable = false)
-    private var repeatPattern: RepeatPattern,
+    var repeatPattern: RepeatPattern,
 
     @Column(name = "repeat_interval", nullable = false)
-    private var repeatInterval: Int,
+    var repeatInterval: Int,
 
     @Column(name = "repeat_days")
-    private var repeatDays: String? = null
+    var repeatDays: String? = null
 ) {
     @OneToMany(mappedBy = "periodicSchedule", cascade = [CascadeType.REMOVE])
-    private val singleSchedules: List<SingleSchedule>? = null
+    val singleSchedules: List<SingleSchedule>? = null
 }

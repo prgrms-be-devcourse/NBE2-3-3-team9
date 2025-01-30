@@ -9,30 +9,30 @@ import java.time.LocalDateTime
 class SingleSchedule(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id")
-    private var id: Long = 0,
+    val id: Long = 0,
 
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
-    private val pet: Pet,
+    val pet: Pet,
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private val user: User,
+    val user: User,
 
     @ManyToOne
     @JoinColumn(name = "periodic_schedule_id")
-    private val periodicSchedule: PeriodicSchedule? = null,
+    val periodicSchedule: PeriodicSchedule? = null,
 
     @Column(name = "name", nullable = false)
-    private var name: String,
+    var name: String,
 
     @Column(name = "start_datetime", nullable = false)
-    private var startDatetime: LocalDateTime,
+    var startDatetime: LocalDateTime,
 
     @Column(name = "end_datetime", nullable = false)
-    private var endDatetime: LocalDateTime,
+    var endDatetime: LocalDateTime,
 
     @Column(name = "notificated_at", nullable = true)
-    private var notificatedAt: LocalDateTime? = null,
+    var notificatedAt: LocalDateTime? = null,
 ) {
 }

@@ -6,48 +6,48 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class PeriodicScheduleDTO(
-    private val id: Long,
-    private val userId: Long,
-    private val petId: Long,
-    private val petName: String,
-    private val name: String,
-    private val startDate: LocalDate,
-    private val endDate: LocalDate,
-    private val startTime: LocalTime,
-    private val endTime: LocalTime,
-    private val repeatPattern: RepeatPattern,
-    private val repeatInterval: Int,
-    private val repeatDays: String? = null,
-    private val createdAt: LocalDateTime,
-    private val updatedAt: LocalDateTime
+    val id: Long,
+    val userId: Long,
+    val petId: Long,
+    val petName: String,
+    val name: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val startTime: LocalTime,
+    val endTime: LocalTime,
+    val repeatPattern: RepeatPattern,
+    val repeatInterval: Int,
+    val repeatDays: String? = null,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime
 ) {
 
     class AddPeriodicScheduleDTO(
-        private val petId: Long,
-        private val petName: String? = null,
-        private val name: String,
-        private val startDate: LocalDate,
-        private val endDate: LocalDate,
-        private val startTime: LocalTime,
-        private val endTime: LocalTime,
-        private val repeatPattern: RepeatPattern,
-        private val repeatInterval: Int,
-        private val repeatDays: String? = null,
+        val petId: Long,
+        val petName: String? = null,
+        val name: String,
+        val startDate: LocalDate,
+        val endDate: LocalDate,
+        val startTime: LocalTime,
+        val endTime: LocalTime,
+        val repeatPattern: RepeatPattern,
+        val repeatInterval: Int,
+        val repeatDays: String? = null,
     ) {
     }
 
     class UpdatePeriodicScheduleDTO(
-        private val id: Long,
-        private val petId: Long,
-        private val petName: String? = null,
-        private val name: String,
-        private val startDate: LocalDate,
-        private val endDate: LocalDate,
-        private val startTime: LocalTime,
-        private val endTime: LocalTime,
-        private val repeatPattern: RepeatPattern,
-        private val repeatInterval: Int,
-        private val repeatDays: String? = null,
+        val id: Long,
+        val petId: Long,
+        val petName: String? = null,
+        val name: String,
+        val startDate: LocalDate,
+        val endDate: LocalDate,
+        val startTime: LocalTime,
+        val endTime: LocalTime,
+        val repeatPattern: RepeatPattern,
+        val repeatInterval: Int,
+        val repeatDays: String? = null,
     ) {
     }
 }

@@ -11,6 +11,10 @@ import jakarta.persistence.ManyToOne
 
 @Entity
 class CommunityLike(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
+
     @ManyToOne
     @JoinColumn(name = "community_id")
     val community: Community,
@@ -18,9 +22,4 @@ class CommunityLike(
     @ManyToOne
     @JoinColumn(name = "user_id")
     val user: User
-) : CommonEntity() {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
-}
+) : CommonEntity()

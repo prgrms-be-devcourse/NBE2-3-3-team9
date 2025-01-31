@@ -16,6 +16,9 @@ interface InformationRepository : JpaRepository<Information, Long> {
     @Query("SELECT i FROM Information i WHERE i.breed.species.name = :speciesName")
     fun findBySpeciesName(speciesName: String, pageable: Pageable): Page<Information>
 
+    @Query("SELECT i FROM Information i JOIN i.breed b WHERE LOWER(b.name) LIKE LOWER(CONCAT('%', :breedName, '%'))")
+    fun findByBreedName(breedName: String, pageable: Pageable): Page<Information>
+
     @Query("SELECT i FROM Information i JOIN i.breed b JOIN b.species s WHERE s.name = :speciesName AND LOWER(b.name) LIKE LOWER(CONCAT('%', :breedName, '%'))")
     fun findBySpeciesAndBreed(speciesName: String, breedName: String, pageable: Pageable): Page<Information>
 

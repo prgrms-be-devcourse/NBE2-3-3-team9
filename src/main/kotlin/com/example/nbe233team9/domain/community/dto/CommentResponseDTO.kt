@@ -8,11 +8,11 @@ data class CommentResponseDTO(
     val communityId: Long,
     val userId: Long,
     val name: String,
-    val profileImg: String?,
-    val content: String,
+    val profileImg: String,
+    val content: String?,
     var canEdit: Boolean = false,
-    var createdAt: LocalDateTime? = null,
-    var updatedAt: LocalDateTime? = null
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime
 ) {
     companion object {
         fun fromEntity(comment: Comment): CommentResponseDTO {
@@ -21,7 +21,7 @@ data class CommentResponseDTO(
                 communityId = comment.community.id!!,
                 userId = comment.user.id!!,
                 name = comment.user.name!!,
-                profileImg = comment.user.profileImg,
+                profileImg = comment.user.profileImg!!,
                 content = comment.content,
                 createdAt = comment.createdAt,
                 updatedAt = comment.updatedAt

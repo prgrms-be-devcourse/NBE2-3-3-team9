@@ -60,7 +60,7 @@ class CommentService(
             .orElseThrow { CustomException(ResultCode.NOT_EXISTS_COMMENT) }
 
         // 댓글 수정
-        comment.updateContent(commentRequestDTO.content)
+        comment.updateContent(commentRequestDTO)
         commentRepository.save(comment)
 
         return CommentResponseDTO.fromEntity(comment)
@@ -107,7 +107,7 @@ class CommentService(
         community.updateLikeCount(community.likeCount + 1)
         communityRepository.save(community)
 
-        return LikeResponseDTO(communityLike.id!!, community.id!!, userId)
+        return LikeResponseDTO(communityLike.id!!, community.id!!, user.id!!)
     }
 
     fun deleteLike(userId: Long, postId: Long) {

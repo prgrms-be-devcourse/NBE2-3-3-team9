@@ -1,7 +1,7 @@
 package com.example.nbe233team9.domain.community.dto
 
 data class CommunityRequestDTO(
-    var title: String = "",
-    var content: String = "",
-    var animalSpecies: String = ""
+    val title: String?,
+    val content: String?,
+    val animalSpecies: String?
 )

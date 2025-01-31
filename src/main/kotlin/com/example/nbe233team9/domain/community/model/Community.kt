@@ -15,13 +15,13 @@ class Community(
     @JoinColumn(name = "user_id")
     val user: User,
 
-    var title: String,
+    var title: String? = null,
 
-    var content: String,
+    var content: String? = null,
 
     var picture: String? = null,
 
-    var animalSpecies: String,
+    var animalSpecies: String? = null,
 
     var commentCount: Int = 0,
 
@@ -35,10 +35,11 @@ class Community(
 ) : CommonEntity() {
 
     fun updatePost(requestDTO: CommunityRequestDTO) {
-        requestDTO.title.takeIf { it.isNotBlank() }?.let { this.title = it }
-        requestDTO.content.takeIf { it.isNotBlank() }?.let { this.content = it }
-        requestDTO.animalSpecies.takeIf { it.isNotBlank() }?.let { this.animalSpecies = it }
+        requestDTO.title.takeIf { !it.isNullOrBlank() }?.let { this.title = it }
+        requestDTO.content.takeIf { !it.isNullOrBlank() }?.let { this.content = it }
+        requestDTO.animalSpecies.takeIf { !it.isNullOrBlank() }?.let { this.animalSpecies = it }
     }
+
     fun updatePicture(picture: String) {
         this.picture = picture
     }

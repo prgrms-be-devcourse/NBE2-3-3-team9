@@ -88,7 +88,7 @@ class PeriodicScheduleService(
     }
 
     @Transactional
-    fun updatePeriodicSchedule(request: PeriodicScheduleDTO.UpdatePeriodicScheduleDTO, userId: Long?): PeriodicScheduleDTO {
+    fun updatePeriodicSchedule(request: PeriodicScheduleDTO.UpdatePeriodicScheduleDTO, userId: Long): PeriodicScheduleDTO {
         val Id: Long = request.id
         val petId: Long = request.petId
 

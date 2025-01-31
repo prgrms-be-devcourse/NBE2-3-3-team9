@@ -1,6 +1,8 @@
 package com.example.nbe233team9.domain.user.model
 
 import com.example.nbe233team9.common.entities.CommonEntity
+import com.example.nbe233team9.domain.community.model.Comment
+import com.example.nbe233team9.domain.community.model.Community
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
@@ -35,6 +37,11 @@ data class User(
     @JsonIgnore
     var refreshToken: String? = null,
 
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    var communities: MutableList<Community> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var comments: MutableList<Comment> = mutableListOf(),
 
     @Enumerated(EnumType.STRING)
     var role: Role = Role.USER

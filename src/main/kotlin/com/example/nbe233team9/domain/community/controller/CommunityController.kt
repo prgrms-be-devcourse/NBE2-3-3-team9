@@ -38,10 +38,9 @@ class CommunityController(
     }
 
     @GetMapping("/myPost")
-    //@PreAuthorize("hasRole('USER')")
-    fun showMyPosts(//@AuthenticationPrincipal userDetails: CustomUserDetails
-                    userId : Long,): ApiResponse<List<CommunityResponseDTO>> {
-        val posts = communityService.showMyPosts(userId)
+    @PreAuthorize("hasRole('USER')")
+    fun showMyPosts(@AuthenticationPrincipal userDetails: CustomUserDetails): ApiResponse<List<CommunityResponseDTO>> {
+        val posts = communityService.showMyPosts(userDetails.getUserId())
         return ApiResponse.ok(posts)
     }
 
@@ -52,19 +51,18 @@ class CommunityController(
     }
 
     @PostMapping("/post", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun createPost(
-        //@AuthenticationPrincipal userDetails: CustomUserDetails,
-        userId : Long,
+        @AuthenticationPrincipal userDetails: CustomUserDetails,
         @RequestPart(value = "dto") communityRequestDTO: CommunityRequestDTO,
         @RequestPart(value = "file", required = false) file: MultipartFile?
     ): ApiResponse<CommunityResponseDTO> {
-        val communityResponseDTO = communityService.createPost(userId, communityRequestDTO, file)
+        val communityResponseDTO = communityService.createPost(userDetails.getUserId(), communityRequestDTO, file)
         return ApiResponse.created(communityResponseDTO)
     }
 
     @PutMapping("/post/{postingId}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun updatePost(
         @PathVariable postingId: Long,
         @RequestPart(value = "dto") communityRequestDTO: CommunityRequestDTO,
@@ -75,7 +73,7 @@ class CommunityController(
     }
 
     @DeleteMapping("/post/{postingId}")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun deletePost(@PathVariable postingId: Long): ApiResponse<String> {
         communityService.deletePost(postingId)
         return ApiResponse.ok("글 삭제 완료")

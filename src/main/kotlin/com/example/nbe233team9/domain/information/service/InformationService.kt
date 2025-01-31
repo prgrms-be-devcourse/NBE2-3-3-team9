@@ -89,4 +89,6 @@ class InformationService(
 
         return InformationResponseDTO.fromEntity(information)
     }
+
+
 }

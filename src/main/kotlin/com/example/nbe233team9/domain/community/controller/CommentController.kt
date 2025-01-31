@@ -17,20 +17,19 @@ class CommentController(
 ) {
 
     @PostMapping("/comments/{postingId}")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun createComment(
-        //@AuthenticationPrincipal userDetails: CustomUserDetails,
-        userId : Long,
+        @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable postingId: Long,
         @RequestParam(required = false) parentId: Long?,
         @RequestBody commentRequestDTO: CommentRequestDTO
     ): ApiResponse<CommentResponseDTO> {
-        val commentResponseDTO = commentService.createComment(userId, postingId, parentId, commentRequestDTO)
+        val commentResponseDTO = commentService.createComment(userDetails.getUserId(), postingId, parentId, commentRequestDTO)
         return ApiResponse.created(commentResponseDTO)
     }
 
     @PutMapping("/comments/{commentId}")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun updateComment(
         @PathVariable commentId: Long,
         @RequestBody commentRequestDTO: CommentRequestDTO
@@ -40,41 +39,38 @@ class CommentController(
     }
 
     @DeleteMapping("/comments/{commentId}")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun deleteComment(@PathVariable commentId: Long): ApiResponse<String> {
         commentService.deleteComment(commentId)
         return ApiResponse.ok("댓글 삭제 성공")
     }
 
     @PostMapping("/like/{postingId}")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun createLike(
-        //@AuthenticationPrincipal userDetails: CustomUserDetails,
-        userId : Long,
+        @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable postingId: Long
     ): ApiResponse<LikeResponseDTO> {
-        val likeResponseDTO = commentService.createLike(userId, postingId)
+        val likeResponseDTO = commentService.createLike(userDetails.getUserId(), postingId)
         return ApiResponse.created(likeResponseDTO)
     }
 
     @DeleteMapping("/like/{postingId}")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     fun deleteLike(
-        //@AuthenticationPrincipal userDetails: CustomUserDetails,
-        userId : Long,
+        @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable postingId: Long
     ): ApiResponse<String> {
-        commentService.deleteLike(userId, postingId)
+        commentService.deleteLike(userDetails.getUserId(), postingId)
         return ApiResponse.ok("좋아요 삭제 성공")
     }
 
     @GetMapping("/comments/{parentId}/replies")
     fun getReplies(
-        //@AuthenticationPrincipal userDetails: CustomUserDetails,
-        userId : Long,
+        @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable parentId: Long
     ): ApiResponse<List<CommentResponseDTO>> {
-        val replies = commentService.getReplies(userId, parentId)
+        val replies = commentService.getReplies(userDetails.getUserId(), parentId)
         return ApiResponse.ok(replies)
     }
 }

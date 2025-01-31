@@ -1,11 +1,11 @@
 package com.example.nbe233team9.domain.information.dto
 
 data class InformationRequestDTO(
-    var speciesName: String,
-    var breedName: String,
-    var age: String,
-    var weight: String,
-    var height: String,
-    var guide: String,
-    var description: String
+    val speciesName: String,
+    val breedName: String,
+    val age: String,
+    val weight: String,
+    val height: String,
+    val guide: String,
+    val description: String
 )

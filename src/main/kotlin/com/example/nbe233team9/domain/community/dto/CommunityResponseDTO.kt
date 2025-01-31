@@ -4,28 +4,28 @@ import com.example.nbe233team9.domain.community.model.Community
 import java.time.LocalDateTime
 
 data class CommunityResponseDTO(
-    var id: Long? = null,
-    var userId: Long? = null,
-    var name: String? = null,
-    var profileImg: String? = null,
-    var title: String? = null,
-    var content: String? = null,
-    var picture: String? = null,
-    var animalSpecies: String? = null,
-    var commentCount: Int = 0,
-    var likeCount: Int = 0,
+    val id: Long,
+    val userId: Long,
+    val name: String,
+    val profileImg: String,
+    val title: String?,
+    val content: String?,
+    val picture: String?,
+    val animalSpecies: String?,
+    val commentCount: Int,
+    val likeCount: Int,
     var liked: Boolean = false,
     var canEdit: Boolean = false,
-    var createdAt: LocalDateTime? = null,
-    var updatedAt: LocalDateTime? = null
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime
 ) {
     companion object {
         fun fromEntity(community: Community): CommunityResponseDTO {
             return CommunityResponseDTO(
-                id = community.id,
-                userId = community.user.id,
-                name = community.user.name,
-                profileImg = community.user.profileImg,
+                id = community.id!!,
+                userId = community.user.id!!,
+                name = community.user.name!!,
+                profileImg = community.user.profileImg!!,
                 title = community.title,
                 content = community.content,
                 picture = community.picture,

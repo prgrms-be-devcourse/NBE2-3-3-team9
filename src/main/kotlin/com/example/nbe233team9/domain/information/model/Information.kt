@@ -13,7 +13,7 @@ class Information(
     @JoinColumn(name = "breed_id")
     val breed: Breed,
 
-    val picture: String? = null,
+    val picture: String?,
     val age: String,
     val weight: String,
     val height: String,

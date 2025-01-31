@@ -6,6 +6,7 @@ import com.example.nbe233team9.domain.auth.security.CustomUserDetails
 import com.example.nbe233team9.domain.auth.security.JwtTokenProvider
 import com.example.nbe233team9.domain.auth.service.AuthService
 import com.example.nbe233team9.domain.auth.service.KakaoService
+import com.example.nbe233team9.domain.schedule.service.RedisService
 import com.example.nbe233team9.domain.user.dto.LoginAdminDTO
 import com.example.nbe233team9.domain.user.dto.UserResponseDTO
 import io.swagger.v3.oas.annotations.Operation
@@ -16,14 +17,8 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.GetMapping
-
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-
+import org.springframework.web.bind.annotation.*
+import java.time.Duration
 
 
 @RestController
@@ -31,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authService: AuthService,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val kakaoService: KakaoService
+    private val kakaoService: KakaoService,
+    private val redisService: RedisService
 ) {
 
     @Value("\${kakao.client-id}")
@@ -102,6 +98,10 @@ class AuthController(
             "userId" to userInfo.id,
             "role" to userInfo.role
         )
+
+        // 6. Redis에 AccessToken 저장
+        val redisKey = java.lang.String.format("user.%s.access_token", userInfo.id)
+        redisService.setValues(redisKey, kakaoAccessToken, Duration.ofMinutes((5 * 60 + 50).toLong()))
 
         return ApiResponse.ok(responseMap)
     }

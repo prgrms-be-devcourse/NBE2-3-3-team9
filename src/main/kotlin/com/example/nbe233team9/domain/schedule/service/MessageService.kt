@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
+import java.time.format.DateTimeFormatter
 
 @Service
 class MessageService {
@@ -23,7 +24,7 @@ class MessageService {
         val jsonTemplate = ("{"
                 + "\"object_type\":\"text\","
                 + "\"text\":\"[알림] 일정이 곧 시작됩니다!\\n" +
-                "- 일정 이름: %s\\n" +
+                "- 일정: %s\\n" +
                 "- 시작 시간: %s\\n" +
                 "- 종료 시간: %s\\n\","
                 + "\"link\":{"
@@ -33,11 +34,13 @@ class MessageService {
                 + "\"button_title\":\"Anicare Link\""
                 + "}")
 
-        val jsonString = java.lang.String.format(
+        val formatter = DateTimeFormatter.ofPattern("MM월 dd일 HH시 mm분")
+
+        val jsonString = String.format(
             jsonTemplate,
             schedule.name,
-            schedule.startDatetime,
-            schedule.endDatetime
+            schedule.startDatetime.format(formatter),
+            schedule.endDatetime.format(formatter)
         )
 
         body.add("template_object", jsonString)

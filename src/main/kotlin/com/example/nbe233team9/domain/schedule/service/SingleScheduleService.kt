@@ -85,6 +85,26 @@ class SingleScheduleService(
         return SingleScheduleDTO.fromEntity(singleSchedule)
     }
 
+    fun deleteSingleSchedule(scheduleId: Long) {
+        val singleSchedule: SingleSchedule? = singleScheduleRepository.findById(scheduleId)
+            .orElseThrow { CustomException(ResultCode.NOT_EXISTS_SCHEDULE) }
+
+        val periodicSchedule: PeriodicSchedule? = singleSchedule?.periodicSchedule
+
+        if (singleSchedule != null) {
+            if (periodicSchedule != null) {
+                if (singleScheduleRepository.countByPeriodicScheduleId(periodicSchedule!!) == 1) {
+                    singleScheduleRepository.deleteById(scheduleId)
+                    periodicScheduleRepository.deleteById(periodicSchedule!!.id)
+                } else {
+                    singleScheduleRepository.deleteById(scheduleId)
+                }
+            } else {
+                singleScheduleRepository.deleteById(scheduleId)
+            }
+        }
+    }
+
     private fun getUserById(userId: Long): User {
         return userRepository.findById(userId).orElseThrow { RuntimeException() }
     }

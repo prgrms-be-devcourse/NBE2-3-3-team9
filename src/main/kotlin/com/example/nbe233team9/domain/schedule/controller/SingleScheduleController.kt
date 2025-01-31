@@ -33,7 +33,8 @@ class SingleScheduleController(
     }
 
     @DeleteMapping("/singleSchedule/{scheduleId}")
-    fun deleteSingleSchedule(@PathVariable scheduleId: Long) {
-        //singleScheduleService.deleteSingleSchedule(scheduleId)
+    fun deleteSingleSchedule(@PathVariable scheduleId: Long): ApiResponse<String> {
+        singleScheduleService.deleteSingleSchedule(scheduleId)
+        return ApiResponse.ok("삭제 완료")
     }
 }

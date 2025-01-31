@@ -72,13 +72,13 @@ class SingleScheduleService(
 
         val periodicSchedule: PeriodicSchedule? = singleSchedule.periodicSchedule
 
+        singleSchedule.updateSingleSchedule(request, petRepository)
+
         if (periodicSchedule != null) {
-            if (singleScheduleRepository.countByPeriodicScheduleId(periodicSchedule!!) == 1) {
+            if (singleScheduleRepository.countByPeriodicScheduleId(periodicSchedule!!) == 0) {
                 periodicScheduleRepository.deleteById(periodicSchedule!!.id)
             }
         }
-
-        singleSchedule.updateSingleSchedule(request, petRepository)
 
         singleScheduleRepository.save(singleSchedule)
 

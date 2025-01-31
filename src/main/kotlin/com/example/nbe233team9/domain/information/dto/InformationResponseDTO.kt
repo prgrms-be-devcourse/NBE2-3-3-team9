@@ -7,11 +7,11 @@ data class InformationResponseDTO(
     val speciesName: String,
     val breedName: String,
     val picture: String?,
-    val age: String,
-    val weight: String,
-    val height: String,
-    val guide: String,
-    val description: String,
+    val age: String?,
+    val weight: String?,
+    val height: String?,
+    val guide: String?,
+    val description: String?,
     val hit: Int
 ) {
     companion object {

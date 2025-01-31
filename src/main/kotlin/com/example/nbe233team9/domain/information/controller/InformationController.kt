@@ -40,4 +40,24 @@ class InformationController(
         val informationDTO = informationService.getInformationDetail(informationId)
         return ApiResponse.ok(informationDTO)
     }
+
+    @PutMapping("/{informationId}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun updateInformation(
+        @PathVariable informationId: Long,
+        @RequestPart("dto") informationRequestDTO: InformationRequestDTO,
+        @RequestPart(value = "file", required = false) file: MultipartFile?
+    ): ApiResponse<InformationResponseDTO> {
+
+        val informationResponseDTO = informationService.updateInformation(informationId, informationRequestDTO, file)
+
+        return ApiResponse.ok(informationResponseDTO)
+    }
+
+    @DeleteMapping("/{informationId}")
+    fun deleteInformation(@PathVariable informationId: Long): ApiResponse<String> {
+
+        informationService.deleteInformation(informationId)
+
+        return ApiResponse.ok("동물 정보 글 삭제 성공")
+    }
 }

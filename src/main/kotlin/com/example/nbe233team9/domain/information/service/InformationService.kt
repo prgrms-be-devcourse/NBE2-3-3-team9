@@ -25,19 +25,15 @@ class InformationService(
 ) {
 
     fun saveInformation(informationDTO: InformationRequestDTO, file: MultipartFile?) {
-        val breed = breedRepository.findByName(informationDTO.breedName)
+        val breed = breedRepository.findByName(informationDTO.breedName!!)
 
-        val check = informationRepository.findBySpeciesAndBreed(informationDTO.speciesName, informationDTO.breedName)
+        val check = informationRepository.findBySpeciesAndBreed(informationDTO.speciesName!!, informationDTO.breedName)
         if (check != null) {
             throw CustomException(ResultCode.DUPLICATE_INFORMATION)
         }
 
         val pictureUrl = try {
-            if (file != null && !file.isEmpty) {
-                s3FileService.uploadFile(file, "community")
-            } else {
-                null
-            }
+            file?.takeIf { !it.isEmpty }?.let { s3FileService.uploadFile(it, "information") }
         } catch (e: IOException) {
             throw CustomException(ResultCode.FILE_UPLOAD_ERROR)
         }
@@ -63,7 +59,7 @@ class InformationService(
                 informationRepository.findAllInformation(pageRequest)
             }
             speciesName.isNullOrEmpty() -> {
-                throw CustomException(ResultCode.NOT_EXISTS_SPECIES)
+                informationRepository.findByBreedName(breedName!!, pageRequest)
             }
             breedName.isNullOrEmpty() -> {
                 informationRepository.findBySpeciesName(speciesName, pageRequest)
@@ -88,6 +84,41 @@ class InformationService(
         informationRepository.save(information)
 
         return InformationResponseDTO.fromEntity(information)
+    }
+
+    fun updateInformation(informationId: Long, informationRequestDTO: InformationRequestDTO, file: MultipartFile?): InformationResponseDTO {
+        // 정보 조회
+        val information = informationRepository.findById(informationId)
+            .orElseThrow { CustomException(ResultCode.NOT_EXISTS_INFORMATION) }
+
+        // 정보 수정
+        information.updateInformation(informationRequestDTO)
+
+        try {
+            file?.takeIf { !it.isEmpty }?.let {
+                information.updatePicture(s3FileService.updateFile(it, information.picture, "information"))
+            }
+        } catch (e: IOException) {
+            throw CustomException(ResultCode.FILE_UPLOAD_ERROR)
+        }
+
+        informationRepository.save(information)
+
+        return InformationResponseDTO.fromEntity(information)
+    }
+
+    fun deleteInformation(informationId: Long) {
+        // 정보 존재 여부 확인
+        val information = informationRepository.findById(informationId)
+            .orElseThrow { CustomException(ResultCode.NOT_EXISTS_INFORMATION) }
+
+        // S3에서 파일 삭제
+        information.picture?.let {
+            s3FileService.deleteFile(it)
+        }
+
+        // 정보 삭제
+        informationRepository.deleteById(informationId)
     }
 
 

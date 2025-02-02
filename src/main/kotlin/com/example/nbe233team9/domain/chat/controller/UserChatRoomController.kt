@@ -2,6 +2,7 @@ package com.example.nbe233team9.domain.chat.controller
 
 import com.example.nbe233team9.common.dto.PageDTO
 import com.example.nbe233team9.common.dto.PageRequestDTO
+import com.example.nbe233team9.common.response.ApiResponse
 import com.example.nbe233team9.domain.auth.security.CustomUserDetails
 import com.example.nbe233team9.domain.chat.dto.ChatRoomCreateRequestDTO
 import com.example.nbe233team9.domain.chat.dto.ChatRoomResponseDTO
@@ -28,9 +29,9 @@ class UserChatRoomController(
     fun createRoom(
         @AuthenticationPrincipal userDetails: CustomUserDetails,
         @RequestBody requestDTO: ChatRoomCreateRequestDTO
-    ): ChatRoomResponseDTO {
+    ): ApiResponse<ChatRoomResponseDTO> {
         val userId = userDetails.getUserId()
-        return chatRoomService.createChatRoom(userId, requestDTO)
+        return ApiResponse.ok(chatRoomService.createChatRoom(userId, requestDTO))
     }
 
     @Operation(summary = "내 채팅방 조회")
@@ -39,9 +40,9 @@ class UserChatRoomController(
     fun getMyChatRooms(
         @AuthenticationPrincipal userDetails: CustomUserDetails,
         @ModelAttribute pageRequestDTO: PageRequestDTO
-    ): PageDTO<ChatRoomResponseDTO> {
+    ): ApiResponse<PageDTO<ChatRoomResponseDTO>> {
         val userId = userDetails.getUserId()
-        return chatRoomService.getRoomsByUserId(userId, pageRequestDTO)
+        return ApiResponse.ok(chatRoomService.getRoomsByUserId(userId, pageRequestDTO))
     }
 
     @Operation(summary = "내 채팅방 검색", description = "사용자가 본인이 참여한 채팅방을 검색")
@@ -51,9 +52,9 @@ class UserChatRoomController(
         @AuthenticationPrincipal userDetails: CustomUserDetails,
         @RequestParam keyword: String,
         @ModelAttribute pageRequestDTO: PageRequestDTO
-    ): PageDTO<ChatRoomResponseDTO> {
+    ): ApiResponse<PageDTO<ChatRoomResponseDTO>> {
         val userId = userDetails.getUserId()
-        return chatRoomService.searchUserChatRooms(userId, keyword, pageRequestDTO)
+        return ApiResponse.ok(chatRoomService.searchUserChatRooms(userId, keyword, pageRequestDTO))
     }
 
     @Operation(summary = "채팅방 입장 (User)", description = "사용자가 채팅방에 입장합니다.")
@@ -62,13 +63,10 @@ class UserChatRoomController(
     fun enterChatRoom(
         @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable roomId: String
-    ): ResponseEntity<String> {
+    ): ApiResponse<String> {
         val userId = userDetails.getUserId()
-
-        // ✅ 사용자 채팅방 입장 처리
         chatParticipantService.joinChatRoom(roomId, userId, false)
-
-        return ResponseEntity.ok("채팅방에 입장했습니다.")
+        return ApiResponse.ok("채팅방에 입장했습니다.")
     }
 
     @Operation(summary = "채팅방 퇴장 (User)", description = "사용자가 채팅방에서 나갑니다.")
@@ -76,11 +74,9 @@ class UserChatRoomController(
     fun exitChatRoom(
         @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable roomId: String
-    ): ResponseEntity<String> {
+    ): ApiResponse<String> {
         val userId = userDetails.getUserId()
-
         chatParticipantService.leaveChatRoom(roomId, userId, false)
-
-        return ResponseEntity.ok("채팅방에서 성공적으로 퇴장했습니다.")
+        return ApiResponse.ok("채팅방에서 성공적으로 퇴장했습니다.")
     }
 }

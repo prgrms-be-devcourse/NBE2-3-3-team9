@@ -44,7 +44,7 @@ class SingleScheduleDTO(
                 userId = singleSchedule.user.id!!,
                 petId = singleSchedule.pet.id,
                 petName = singleSchedule.pet.name,
-                name = singleSchedule.pet.name,
+                name = singleSchedule.name,
                 periodicScheduleId = singleSchedule.periodicSchedule?.id,
                 startDatetime = singleSchedule.startDatetime,
                 endDatetime = singleSchedule.endDatetime,

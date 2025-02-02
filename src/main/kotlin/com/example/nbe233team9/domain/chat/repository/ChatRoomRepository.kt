@@ -1,9 +1,14 @@
 package com.example.nbe233team9.domain.chat.repository
 
 import com.example.nbe233team9.domain.chat.entity.ChatRoom
+import com.example.nbe233team9.domain.user.model.User
+import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -50,4 +55,13 @@ interface ChatRoomRepository : JpaRepository<ChatRoom, Long> {
         roomIds: List<String>,
         pageable: Pageable
     ): Page<ChatRoom>
+
+    // 특정 채팅방 삭제
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ChatRoom c WHERE c.roomId = :roomId")
+    fun deleteByRoomId(@Param("roomId") roomId: String)
+
+    // 관리자가 참여 중인 채팅방 조회 (페이징 적용)
+    fun findByAdminsContaining(admin: User, pageable: Pageable): Page<ChatRoom>
 }

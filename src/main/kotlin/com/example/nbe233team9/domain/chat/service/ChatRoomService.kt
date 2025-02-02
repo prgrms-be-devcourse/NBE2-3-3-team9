@@ -35,8 +35,10 @@ class ChatRoomService(
      * 채팅방 생성
      */
     fun createChatRoom(userId: Long, requestDTO: ChatRoomCreateRequestDTO): ChatRoomResponseDTO {
-        val creator = chatServiceUtil.findUserById(userId)
+        // 1️⃣ 채팅방 생성자 조회
+        val creator: User = chatServiceUtil.findUserById(userId)
 
+        // 2️⃣ 채팅방 생성
         val chatRoom = ChatRoom(
             roomId = ChatRoom.generateUniqueRoomId(),
             roomName = requestDTO.roomName,
@@ -47,14 +49,19 @@ class ChatRoomService(
 
         chatRoomRepository.save(chatRoom)
 
-        val randomAdmin = assignRandomAdminToRoom(chatRoom)
 
-        chatMessageService.sendSystemMessage(
-            "채팅방이 생성되었습니다. 방 제목: ${requestDTO.roomName} 설명: ${requestDTO.description}",
-            chatRoom.roomId,
-            ChatMessage.MessageType.SYSTEM
+        val creatorParticipant = ChatParticipant(
+            chatRoom = chatRoom,
+            user = creator,
+            isAdmin = false,  // 생성자는 관리자가 아님
+            isActive = true   // 기본적으로 활성화 상태
         )
+        chatParticipantRepository.save(creatorParticipant)
 
+        // 3️⃣ 랜덤 관리자 배정
+        val randomAdmin: User? = assignRandomAdminToRoom(chatRoom)
+
+        // 4️⃣ 시스템 메시지 전송 (관리자 배정 알림)
         randomAdmin?.let {
             chatMessageService.sendSystemMessage(
                 "관리자 ${it.name}님이 채팅방에 배정되었습니다.",
@@ -63,6 +70,7 @@ class ChatRoomService(
             )
         }
 
+        // 6️⃣ DTO 변환 후 반환
         return convertToDTO(chatRoom, userId)
     }
 
@@ -70,7 +78,7 @@ class ChatRoomService(
      * 관리자 중 랜덤으로 한 명을 채팅방에 배정
      */
     private fun assignRandomAdminToRoom(chatRoom: ChatRoom): User? {
-        val admins = userRepository.findByRole(Role.ADMIN)
+        val admins: List<User> = userRepository.findByRole(Role.ADMIN)
 
         if (admins.isEmpty()) return null
 

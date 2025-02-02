@@ -213,10 +213,6 @@ class ChatRoomService(
         val pageable = pageRequestDTO.toPageRequest()
         val chatRoomsPage = chatRoomRepository.findByCreatorId(userId, pageable)
 
-        if (chatRoomsPage.isEmpty) {
-            throw IllegalArgumentException("생성한 채팅방이 없습니다.")
-        }
-
         val content = chatRoomsPage.map { convertToDTO(it, userId) }.toList()
         val meta = PageMetaDTO(pageRequestDTO.page, pageRequestDTO.size, chatRoomsPage.totalElements)
         return PageDTO(content, meta)

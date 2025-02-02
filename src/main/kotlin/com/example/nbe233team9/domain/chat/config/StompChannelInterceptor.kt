@@ -55,7 +55,7 @@ class StompChannelInterceptor (
         val userId = jwtTokenProvider.getId(token)
 
         // Spring Security의 Authentication 객체 생성
-        val authentication = UsernamePasswordAuthenticationToken(userId, null, null)
+        val authentication = UsernamePasswordAuthenticationToken(userId, null, emptyList())
 
         // SecurityContext 설정 (WebSocket 인증을 위한 SecurityContext)
         SecurityContextHolder.getContext().authentication = authentication

@@ -108,6 +108,7 @@ class RedisMessagePublisher(
             messageId = chatMessage.id!!,
             roomId = chatMessage.chatRoom.roomId,
             senderName = chatMessage.sender.name!!,
+            senderId = chatMessage.sender.id!!,
             content = chatMessage.content,
             type = chatMessage.type,
             sentAt = chatMessage.sentAt

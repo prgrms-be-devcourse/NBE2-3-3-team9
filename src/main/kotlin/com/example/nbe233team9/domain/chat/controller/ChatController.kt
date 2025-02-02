@@ -38,22 +38,19 @@ class ChatController(
     fun sendMessage(
         @DestinationVariable roomId: String,
         requestDTO: ChatMessageRequestDTO,
-        principal: Principal
+        @AuthenticationPrincipal userDetails: CustomUserDetails
     ) {
         try {
-            val senderId = principal.name.toLong()
+            val senderId = userDetails.getUserId()
 
             // 메시지 저장 및 발행
-            val savedMessage = chatMessageService.sendMessage(senderId, requestDTO)
+            val savedMessage: ChatMessageResponseDTO = chatMessageService.sendMessage(senderId, requestDTO)
 
-            // Redis 채널 발행
-            redisMessagePublisher.publish("chatroom:$roomId", savedMessage)
-
-            // WebSocket으로 메시지 브로드캐스트
+            // WebSocket을 통해 메시지 전송
             messagingTemplate.convertAndSend("/topic/chat/$roomId", savedMessage)
 
         } catch (e: Exception) {
-            log.error("메시지 전송 중 오류 발생: {}", e.message, e)
+            log.error("메시지 전송 중 오류 발생: ${e.message}", e)
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "메시지 전송 실패")
         }
     }

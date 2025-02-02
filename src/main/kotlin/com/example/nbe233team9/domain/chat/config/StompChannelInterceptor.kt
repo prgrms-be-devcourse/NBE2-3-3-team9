@@ -28,24 +28,31 @@ class StompChannelInterceptor (
 
     override fun preSend(message: Message<*>, channel: MessageChannel): Message<*> {
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java)
-            ?: return message
 
-        if (accessor.command == StompCommand.CONNECT) {
-            val token = accessor.getFirstNativeHeader("Authorization")?.removePrefix("Bearer ")
-            if (!token.isNullOrBlank() && jwtTokenProvider.validateToken(token)) {
-                val userId = jwtTokenProvider.getId(token)
-                val authentication = UsernamePasswordAuthenticationToken(userId, null, null)
-
-                // ✅ SecurityContext 설정
-                val securityContext = SecurityContextHolder.createEmptyContext()
-                securityContext.authentication = authentication
-                SecurityContextHolder.setContext(securityContext)
-
-                accessor.user = authentication // WebSocket 세션에 사용자 설정
-
-                log.info("✅ WebSocket 인증 성공: 사용자 ID = {}", userId)
-            }
+        if (accessor == null || accessor.command != StompCommand.CONNECT) {
+            return message
         }
+
+        val token = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER)
+            ?.takeIf { it.startsWith(BEARER_PREFIX) }
+            ?.removePrefix(BEARER_PREFIX)
+            ?: throw IllegalArgumentException("Invalid or missing JWT Token").also {
+                log.error("WebSocket 연결 실패: Authorization 헤더가 없거나 유효하지 않음")
+            }
+
+        if (!jwtTokenProvider.validateToken(token)) {
+            log.error("WebSocket 연결 실패: 유효하지 않은 JWT 토큰")
+            throw IllegalArgumentException("Invalid or expired JWT Token")
+        }
+
+        val userId = jwtTokenProvider.getId(token)
+        val authentication = UsernamePasswordAuthenticationToken(userId, null, null)
+
+        SecurityContextHolder.getContext().authentication = authentication
+        accessor.user = authentication
+
+        log.info("WebSocket 인증 성공: 사용자 ID = $userId")
+
         return message
     }
 }

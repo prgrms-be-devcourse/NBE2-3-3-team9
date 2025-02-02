@@ -63,5 +63,5 @@ interface ChatRoomRepository : JpaRepository<ChatRoom, Long> {
     fun deleteByRoomId(@Param("roomId") roomId: String)
 
     // 관리자가 참여 중인 채팅방 조회 (페이징 적용)
-    fun findByAdminsContaining(admin: User, pageable: Pageable): Page<ChatRoom>
+    fun findAdminChatRooms(admin: User, pageable: Pageable): Page<ChatRoom>
 }

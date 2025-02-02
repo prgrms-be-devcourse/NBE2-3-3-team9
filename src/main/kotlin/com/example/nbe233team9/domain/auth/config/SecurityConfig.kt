@@ -41,6 +41,13 @@ class SecurityConfig(
                     ).permitAll()
                     .requestMatchers("/api/auth/kakao/**").permitAll()
                     .requestMatchers("/api/**").permitAll()
+                    .requestMatchers(
+                        "/chat-socket/**",
+                        "/topic/**",
+                        "/app/**",
+                        "/ws/**",
+                        "/api/chat/**"
+                    ).permitAll()
                     .anyRequest().authenticated()
             }
             .exceptionHandling { exception ->

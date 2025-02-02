@@ -1,7 +1,24 @@
 version: '3.8'
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # Spring Boot 애플리케이션 포트
+    env_file:
+      - .env  # .env 파일에서 환경 변수 로드
+    environment:
+      - SPRING_DATA_REDIS_HOST=host.docker.internal  # Redis에 연결할 호스트
+      - SPRING_DATA_REDIS_PORT=6379  # Redis 포트
+    depends_on:
+      - mariadb
+      - redis
+    networks:
+      - app-network
   mariadb:
     image: mariadb:latest
+    container_name: mariadb
     ports:
       - "3306:3306"
     environment:

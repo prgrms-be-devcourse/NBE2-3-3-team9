@@ -1,6 +1,7 @@
 package com.example.nbe233team9.domain.chat.config
 
 import org.springframework.context.annotation.Configuration
+import org.springframework.messaging.simp.config.ChannelRegistration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
@@ -8,7 +9,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker // WebSocket 메시지 브로커 활성화
-class WebSocketConfig : WebSocketMessageBrokerConfigurer {
+class WebSocketConfig (
+    private val stompChannelInterceptor: StompChannelInterceptor
+): WebSocketMessageBrokerConfigurer {
 
     // 클라이언트가 WebSocket 연결을 요청할 때 사용할 엔드포인트 설정
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
@@ -23,7 +26,7 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/app")     // 클라이언트가 서버로 메시지를 송신할 때 사용하는 경로 (@MessageMapping으로 전달됨)
     }
 
-    /* 기존에 있던 configureClientInboundChannel은
-     * 메시지 전송 시에는 jwt 검증을 안 하기로 해서 삭제
-    */
+    override fun configureClientInboundChannel(registration: ChannelRegistration) {
+        registration.interceptors(stompChannelInterceptor)
+    }
 }

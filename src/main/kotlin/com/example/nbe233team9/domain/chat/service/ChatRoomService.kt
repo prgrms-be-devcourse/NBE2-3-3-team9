@@ -13,7 +13,9 @@ import com.example.nbe233team9.domain.chat.repository.ChatRoomRepository
 import com.example.nbe233team9.domain.user.model.Role
 import com.example.nbe233team9.domain.user.model.User
 import com.example.nbe233team9.domain.user.repository.UserRepository
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -92,20 +94,31 @@ class ChatRoomService(
     /**
      * 전체 채팅방 조회
      */
-    fun getAllChatRooms(pageRequestDTO: PageRequestDTO): PageDTO<ChatRoomResponseDTO> {
-        val pageable = pageRequestDTO.toPageRequest()
-        val chatRoomsPage = chatRoomRepository.findAll(pageable)
+    fun getAllChatRooms(adminId: Long, pageRequestDTO: PageRequestDTO): PageDTO<ChatRoomResponseDTO> {
+        val pageable: Pageable = pageRequestDTO.toPageRequest()
 
-        val content = chatRoomsPage.map { convertToDTO(it, null) }.toList()
+        // 관리자 User 객체 조회 (필요한 경우)
+        val admin: User = userRepository.findById(adminId)
+            .orElseThrow { IllegalArgumentException("관리자 정보를 찾을 수 없습니다.") }
 
+        // 관리자가 포함된 채팅방 조회
+        val adminChatRooms: Page<ChatRoom> = chatRoomRepository.findAdminChatRooms(admin, pageable)
+
+        // DTO 변환
+        val content: List<ChatRoomResponseDTO> = adminChatRooms.content.map { chatRoom ->
+            convertToDTO(chatRoom, admin.id)
+        }
+
+        // 페이징 메타데이터 생성
         val meta = PageMetaDTO(
             pageRequestDTO.page,
             pageRequestDTO.size,
-            chatRoomsPage.totalElements
+            adminChatRooms.totalElements
         )
 
         return PageDTO(content, meta)
     }
+
 
     /**
      * 대기 중인(관리자가 없는) 채팅방 조회

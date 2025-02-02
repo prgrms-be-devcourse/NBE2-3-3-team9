@@ -15,7 +15,7 @@ class SystemUserInitializer(
 
     @PostConstruct
     fun initSystemUser() {
-        val existingUser = userRepository.findByEmail("system@admin.com")
+        val existingUser = userRepository.findByEmail("system@anicare.com")
 
         if (existingUser.isEmpty) {
             val systemUser = User(

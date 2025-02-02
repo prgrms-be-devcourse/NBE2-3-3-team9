@@ -29,10 +29,14 @@ class AdminChatRoomController(
     }
 
     @Operation(summary = "모든 채팅방 조회")
-    @GetMapping("/rooms")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    fun getAllChatRooms(@ModelAttribute pageRequestDTO: PageRequestDTO): PageDTO<ChatRoomResponseDTO> {
-        return chatRoomService.getAllChatRooms(pageRequestDTO)
+    fun getAllChatRooms(
+        @ModelAttribute pageRequestDTO: PageRequestDTO,
+        @AuthenticationPrincipal userDetails: CustomUserDetails
+    ): PageDTO<ChatRoomResponseDTO> {
+        val adminId = userDetails.getUserId()
+        return chatRoomService.getAllChatRooms(adminId, pageRequestDTO)
     }
 
     @Operation(summary = "채팅방 검색 (Admin)")

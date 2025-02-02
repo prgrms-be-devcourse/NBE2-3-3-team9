@@ -3,16 +3,18 @@ package com.example.nbe233team9.domain.auth.security
 
 
 import com.example.nbe233team9.domain.user.model.User
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class CustomUserDetails(
-    private val user: User, // User 객체
-    private val userId: Long
+data class CustomUserDetails @JsonCreator constructor(
+    @JsonProperty("user") private val user: User?,
+    @JsonProperty("userId") private val userId: Long
 ) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        val role = "ROLE_${user.role.name}"
+        val role = "ROLE_${user?.role?.name ?: "USER"}"
         return listOf(GrantedAuthority { role })
     }
 

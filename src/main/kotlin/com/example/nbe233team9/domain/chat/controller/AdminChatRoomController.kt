@@ -2,6 +2,7 @@ package com.example.nbe233team9.domain.chat.controller
 
 import com.example.nbe233team9.common.dto.PageDTO
 import com.example.nbe233team9.common.dto.PageRequestDTO
+import com.example.nbe233team9.common.response.ApiResponse
 import com.example.nbe233team9.domain.auth.security.CustomUserDetails
 import com.example.nbe233team9.domain.chat.dto.ChatRoomResponseDTO
 import com.example.nbe233team9.domain.chat.service.ChatParticipantService
@@ -34,9 +35,9 @@ class AdminChatRoomController(
     fun getAllChatRooms(
         @ModelAttribute pageRequestDTO: PageRequestDTO,
         @AuthenticationPrincipal userDetails: CustomUserDetails
-    ): PageDTO<ChatRoomResponseDTO> {
+    ): ApiResponse<PageDTO<ChatRoomResponseDTO>> {
         val adminId = userDetails.getUserId()
-        return chatRoomService.getAllChatRooms(adminId, pageRequestDTO)
+        return ApiResponse.ok(chatRoomService.getAllChatRooms(adminId, pageRequestDTO))
     }
 
     @Operation(summary = "채팅방 검색 (Admin)")
@@ -45,8 +46,8 @@ class AdminChatRoomController(
     fun searchChatRooms(
         @RequestParam keyword: String,
         @ModelAttribute pageRequestDTO: PageRequestDTO
-    ): PageDTO<ChatRoomResponseDTO> {
-        return chatRoomService.searchAllChatRooms(keyword, pageRequestDTO)
+    ): ApiResponse<PageDTO<ChatRoomResponseDTO>> {
+        return ApiResponse.ok(chatRoomService.searchAllChatRooms(keyword, pageRequestDTO))
     }
 
     @Operation(summary = "채팅방 입장 (Admin)", description = "관리자가 채팅방에 입장합니다.")
@@ -55,13 +56,10 @@ class AdminChatRoomController(
     fun enterChatRoomAsAdmin(
         @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable roomId: String
-    ): ResponseEntity<String> {
+    ): ApiResponse<String> {
         val adminId = userDetails.getUserId()
-
-        // ✅ 관리자 채팅방 입장 처리
         chatParticipantService.joinChatRoom(roomId, adminId, true)
-
-        return ResponseEntity.ok("채팅방에 입장했습니다.")
+        return ApiResponse.ok("채팅방에 입장했습니다.")
     }
 
     @Operation(summary = "채팅방 퇴장 (Admin)", description = "관리자가 채팅방에서 나갑니다.")
@@ -69,11 +67,9 @@ class AdminChatRoomController(
     fun exitChatRoomAsAdmin(
         @AuthenticationPrincipal userDetails: CustomUserDetails,
         @PathVariable roomId: String
-    ): ResponseEntity<String> {
+    ):  ApiResponse<String> {
         val adminId = userDetails.getUserId()
-
         chatParticipantService.leaveChatRoom(roomId, adminId, true)
-
-        return ResponseEntity.ok("채팅방에서 성공적으로 퇴장했습니다.")
+        return ApiResponse.ok("채팅방에서 성공적으로 퇴장했습니다.")
     }
 }

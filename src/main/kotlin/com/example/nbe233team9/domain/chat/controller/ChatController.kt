@@ -1,5 +1,6 @@
 package com.example.nbe233team9.domain.chat.controller
 
+import com.example.nbe233team9.common.response.ApiResponse
 import com.example.nbe233team9.domain.auth.security.CustomUserDetails
 import com.example.nbe233team9.domain.chat.dto.ChatMessageRequestDTO
 import com.example.nbe233team9.domain.chat.dto.ChatMessageResponseDTO
@@ -62,7 +63,7 @@ class ChatController(
     @Operation(summary = "채팅방 메시지 로그 조회")
     @GetMapping("/rooms/{roomId}/messages")
     @PreAuthorize("hasRole('USER')")
-    fun getMessagesByRoom(@PathVariable roomId: String): List<ChatMessageResponseDTO> {
-        return chatMessageService.getMessagesByRoom(roomId)
+    fun getMessagesByRoom(@PathVariable roomId: String): ApiResponse<List<ChatMessageResponseDTO>> {
+        return ApiResponse.ok(chatMessageService.getMessagesByRoom(roomId))
     }
 }

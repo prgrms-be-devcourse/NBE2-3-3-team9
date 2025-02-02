@@ -39,28 +39,31 @@ class StompChannelInterceptor (
         val token = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER)
             ?.takeIf { it.startsWith(BEARER_PREFIX) }
             ?.substring(BEARER_PREFIX.length)
-            ?: run {
-                log.error("WebSocket 연결 실패: Authorization 헤더가 없거나 유효하지 않음")
-                throw IllegalArgumentException("Invalid or missing JWT Token")
-            }
 
-        // JWT 토큰 유효성 검증
+        if (token.isNullOrBlank()) {
+            log.error("❌ WebSocket 연결 실패: Authorization 헤더가 없거나 유효하지 않음")
+            throw IllegalArgumentException("Invalid or missing JWT Token")
+        }
+
+        // JWT 토큰 검증
         if (!jwtTokenProvider.validateToken(token)) {
-            log.error("WebSocket 연결 실패: 유효하지 않은 JWT 토큰")
+            log.error("❌ WebSocket 연결 실패: 유효하지 않은 JWT 토큰")
             throw IllegalArgumentException("Invalid or expired JWT Token")
         }
 
-        // JWT 토큰에서 사용자 ID를 추출하고 Authentication 객체 생성
+        // JWT 토큰에서 사용자 ID 추출
         val userId = jwtTokenProvider.getId(token)
-        val authentication = UsernamePasswordAuthenticationToken(userId, null, null)
 
-        // SecurityContext에 인증 정보 설정
+        // Spring Security의 Authentication 객체 생성
+        val authentication = UsernamePasswordAuthenticationToken(userId, null, emptyList())
+
+        // SecurityContext 설정 (WebSocket 인증을 위한 SecurityContext)
         SecurityContextHolder.getContext().authentication = authentication
 
-        // WebSocket 세션에 사용자 정보 설정
+        // WebSocket 세션에 사용자 정보 설정 (WebSocket Principal에 설정)
         accessor.user = authentication
 
-        log.info("WebSocket 인증 성공: 사용자 ID = {}", userId)
+        log.info("✅ WebSocket 인증 성공: 사용자 ID = {}", userId)
 
         return message
     }

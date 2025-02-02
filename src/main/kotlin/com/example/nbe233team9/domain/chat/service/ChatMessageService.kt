@@ -8,8 +8,10 @@ import com.example.nbe233team9.domain.chat.repository.ChatMessageRepository
 import com.example.nbe233team9.domain.chat.repository.ChatParticipantRepository
 import com.example.nbe233team9.domain.chat.repository.ChatRoomRepository
 import com.example.nbe233team9.domain.user.model.User
-import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_ID
+import com.example.nbe233team9.domain.user.repository.UserRepository
+import com.example.nbe233team9.global.constants.ChatConstants
 import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_NAME
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -24,6 +26,7 @@ class ChatMessageService(
     private val chatMessageRepository: ChatMessageRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatParticipantRepository: ChatParticipantRepository,
+    private val userRepository: UserRepository,
     private val chatServiceUtil: ChatServiceUtil
 ) {
 
@@ -125,15 +128,17 @@ class ChatMessageService(
         val sender = chatMessage.sender
 
         val opponentParticipant = chatParticipantRepository.findByChatRoom(chatRoom)
-            .firstOrNull { it.user.id != sender.id }
+            .firstOrNull { it.user.id != sender!!.id }
 
         val opponent = opponentParticipant?.user
 
         return ChatMessageResponseDTO(
             messageId = chatMessage.id!!,
             roomId = chatMessage.chatRoom.roomId,
-            senderName = sender.name ?: SYSTEM_USER_NAME,
-            senderId = sender.id ?: SYSTEM_USER_ID,
+            senderName = sender!!.name ?: SYSTEM_USER_NAME,
+            senderId = sender.id ?: userRepository.findByEmail(ChatConstants.SYSTEM_USER_EMAIL)
+                .orElseThrow { EntityNotFoundException("시스템 유저를 찾을 수 없습니다.") }
+                .id!!,
             content = chatMessage.content,
             type = chatMessage.type,
             sentAt = chatMessage.sentAt,

@@ -6,6 +6,8 @@ import com.example.nbe233team9.domain.animal.model.Species
 import com.example.nbe233team9.domain.animal.repository.BreedRepository
 import com.example.nbe233team9.domain.animal.repository.SpeciesRepository
 import com.example.nbe233team9.domain.pet.dto.PetDTO
+import com.example.nbe233team9.domain.schedule.model.PeriodicSchedule
+import com.example.nbe233team9.domain.schedule.model.SingleSchedule
 import com.example.nbe233team9.domain.user.model.User
 import jakarta.persistence.*
 
@@ -37,7 +39,13 @@ class Pet (
     var picture: String? = null,
 
     @Column(nullable = false)
-    var gender: String
+    var gender: String,
+
+    @OneToMany(mappedBy = "pet", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val singleSchedules: MutableList<SingleSchedule> = mutableListOf(),
+
+    @OneToMany(mappedBy = "pet", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val periodicSchedules: MutableList<PeriodicSchedule> = mutableListOf()
 ) : CommonEntity() {
 
 

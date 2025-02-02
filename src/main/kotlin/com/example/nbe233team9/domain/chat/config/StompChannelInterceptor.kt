@@ -27,44 +27,25 @@ class StompChannelInterceptor (
     }
 
     override fun preSend(message: Message<*>, channel: MessageChannel): Message<*> {
-        // 메시지에서 StompHeaderAccessor를 가져옴
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java)
+            ?: return message
 
-        // accessor가 null이거나 CONNECT 명령이 아니면 메시지를 그대로 반환
-        if (accessor == null || accessor.command != StompCommand.CONNECT) {
-            return message
+        if (accessor.command == StompCommand.CONNECT) {
+            val token = accessor.getFirstNativeHeader("Authorization")?.removePrefix("Bearer ")
+            if (!token.isNullOrBlank() && jwtTokenProvider.validateToken(token)) {
+                val userId = jwtTokenProvider.getId(token)
+                val authentication = UsernamePasswordAuthenticationToken(userId, null, null)
+
+                // ✅ SecurityContext 설정
+                val securityContext = SecurityContextHolder.createEmptyContext()
+                securityContext.authentication = authentication
+                SecurityContextHolder.setContext(securityContext)
+
+                accessor.user = authentication // WebSocket 세션에 사용자 설정
+
+                log.info("✅ WebSocket 인증 성공: 사용자 ID = {}", userId)
+            }
         }
-
-        // Authorization 헤더에서 JWT 토큰 추출
-        val token = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER)
-            ?.takeIf { it.startsWith(BEARER_PREFIX) }
-            ?.substring(BEARER_PREFIX.length)
-
-        if (token.isNullOrBlank()) {
-            log.error("❌ WebSocket 연결 실패: Authorization 헤더가 없거나 유효하지 않음")
-            throw IllegalArgumentException("Invalid or missing JWT Token")
-        }
-
-        // JWT 토큰 검증
-        if (!jwtTokenProvider.validateToken(token)) {
-            log.error("❌ WebSocket 연결 실패: 유효하지 않은 JWT 토큰")
-            throw IllegalArgumentException("Invalid or expired JWT Token")
-        }
-
-        // JWT 토큰에서 사용자 ID 추출
-        val userId = jwtTokenProvider.getId(token)
-
-        // Spring Security의 Authentication 객체 생성
-        val authentication = UsernamePasswordAuthenticationToken(userId, null, null)
-
-        // SecurityContext 설정 (WebSocket 인증을 위한 SecurityContext)
-        SecurityContextHolder.getContext().authentication = authentication
-
-        // WebSocket 세션에 사용자 정보 설정 (WebSocket Principal에 설정)
-        accessor.user = authentication
-
-        log.info("✅ WebSocket 인증 성공: 사용자 ID = {}", userId)
-
         return message
     }
 }

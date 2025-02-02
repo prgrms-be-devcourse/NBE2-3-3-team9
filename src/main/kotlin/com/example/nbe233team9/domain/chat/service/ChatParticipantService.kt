@@ -2,6 +2,7 @@ package com.example.nbe233team9.domain.chat.service
 
 import com.example.nbe233team9.domain.chat.entity.ChatMessage
 import com.example.nbe233team9.domain.chat.entity.ChatParticipant
+import com.example.nbe233team9.domain.chat.repository.ChatMessageRepository
 import com.example.nbe233team9.domain.chat.repository.ChatParticipantRepository
 import com.example.nbe233team9.domain.chat.repository.ChatRoomRepository
 import jakarta.transaction.Transactional
@@ -13,6 +14,7 @@ import java.time.LocalDateTime
 class ChatParticipantService(
     private val chatParticipantRepository: ChatParticipantRepository,
     private val chatRoomRepository: ChatRoomRepository,
+    private val chatMessageRepository: ChatMessageRepository,
     private val chatServiceUtil: ChatServiceUtil,
     private val chatMessageService: ChatMessageService
 ) {
@@ -68,7 +70,15 @@ class ChatParticipantService(
      * @param roomId 채팅방 ID
      * @param userId 퇴장할 사용자 ID
      */
+    /**
+     * 채팅방 퇴장 처리
+     * - 사용자가 채팅방에서 나가면 isActive를 false로 변경
+     *
+     * @param roomId 채팅방 ID
+     * @param userId 퇴장할 사용자 ID
+     */
     fun leaveChatRoom(roomId: String, userId: Long, isAdmin: Boolean) {
+
         val chatRoom = chatServiceUtil.findChatRoomById(roomId)
         val user = chatServiceUtil.findUserById(userId)
 
@@ -81,8 +91,18 @@ class ChatParticipantService(
         val content = if (isAdmin) "관리자가 퇴장했습니다." else "사용자가 퇴장했습니다."
         chatMessageService.sendSystemMessage(content, roomId, ChatMessage.MessageType.SYSTEM)
 
+        // 사용자가 나가면 무조건 삭제
+        if (!isAdmin) {
+            chatMessageRepository.deleteByChatRoom(chatRoom) // 채팅 메시지 삭제
+            chatParticipantRepository.deleteByChatRoom(chatRoom) // 채팅 참여자 삭제
+            chatRoomRepository.delete(chatRoom) // 채팅방 삭제
+            return
+        } else {
+            chatParticipantRepository.delete(participant) // 해당 관리자만 삭제
+        }
+
         // 모든 관리자가 나갔는지 확인 후 occupied 상태 변경
-        if (isAdmin && chatParticipantRepository.countByChatRoomAndIsAdminTrueAndIsActiveTrue(chatRoom) == 0L) {
+        if (chatParticipantRepository.countByChatRoomAndIsAdminTrueAndIsActiveTrue(chatRoom) == 0L) {
             chatRoom.occupied = false
             chatRoomRepository.save(chatRoom)
         }

@@ -8,6 +8,7 @@ import com.example.nbe233team9.domain.chat.repository.ChatMessageRepository
 import com.example.nbe233team9.domain.chat.repository.ChatParticipantRepository
 import com.example.nbe233team9.domain.chat.repository.ChatRoomRepository
 import com.example.nbe233team9.domain.user.model.User
+import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_ID
 import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_NAME
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -132,6 +133,7 @@ class ChatMessageService(
             messageId = chatMessage.id!!,
             roomId = chatMessage.chatRoom.roomId,
             senderName = sender.name ?: SYSTEM_USER_NAME,
+            senderId = sender.id ?: SYSTEM_USER_ID,
             content = chatMessage.content,
             type = chatMessage.type,
             sentAt = chatMessage.sentAt,

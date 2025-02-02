@@ -35,9 +35,7 @@ class JwtAuthenticationFilter(
         val requestURI = request.requestURI
 
         // Swagger 및 WebSocket 경로는 필터링하지 않음
-        if (SWAGGER_WHITELIST.any { requestURI.startsWith(it) } ||
-            requestURI.startsWith("/ws") || requestURI.startsWith("/chat-socket")
-        ) {
+        if (SWAGGER_WHITELIST.any { requestURI.startsWith(it) }        ) {
             filterChain.doFilter(request, response)
             return
         }

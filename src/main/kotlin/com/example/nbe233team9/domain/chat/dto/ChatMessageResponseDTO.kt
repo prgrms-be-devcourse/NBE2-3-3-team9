@@ -7,6 +7,7 @@ class ChatMessageResponseDTO (
     var messageId: Long,
     var roomId: String,
     var senderName: String,
+    var senderId: Long,
     var content: String,
     var type: ChatMessage.MessageType,
     var sentAt: LocalDateTime,

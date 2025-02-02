@@ -7,10 +7,10 @@ import com.example.nbe233team9.domain.chat.entity.ChatMessage
 import com.example.nbe233team9.domain.chat.entity.ChatRoom
 import com.example.nbe233team9.domain.chat.repository.ChatMessageRepository
 import com.example.nbe233team9.domain.chat.repository.ChatRoomRepository
+import com.example.nbe233team9.domain.user.model.Role
 import com.example.nbe233team9.domain.user.model.User
 import com.example.nbe233team9.domain.user.repository.UserRepository
 import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_EMAIL
-import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_ID
 import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_NAME
 import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
@@ -107,8 +107,8 @@ class RedisMessagePublisher(
         ChatMessageResponseDTO(
             messageId = chatMessage.id!!,
             roomId = chatMessage.chatRoom.roomId,
-            senderName = chatMessage.sender.name!!,
-            senderId = chatMessage.sender.id!!,
+            senderName = chatMessage.sender!!.name!!,
+            senderId = chatMessage.sender!!.id!!,
             content = chatMessage.content,
             type = chatMessage.type,
             sentAt = chatMessage.sentAt
@@ -129,6 +129,20 @@ class RedisMessagePublisher(
     /**
      * 시스템 유저 생성
      */
-    private fun getSystemUser(): User =
-        User(id = SYSTEM_USER_ID, name = SYSTEM_USER_NAME, email = SYSTEM_USER_EMAIL)
+    /**
+     * 시스템 유저 조회 또는 생성
+     */
+    private fun getSystemUser(): User {
+        return userRepository.findByEmail(SYSTEM_USER_EMAIL)
+            .orElseGet {
+                val systemUser = User(
+                    name = SYSTEM_USER_NAME,
+                    email = SYSTEM_USER_EMAIL,
+                    role = Role.SYSTEM
+                )
+                userRepository.save(systemUser)  // DB에 저장 후 반환
+                userRepository.findByEmail(SYSTEM_USER_EMAIL).get() // 새로 저장된 시스템 유저 다시 조회
+            }
+    }
+
 }

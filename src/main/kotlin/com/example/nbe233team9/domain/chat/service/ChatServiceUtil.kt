@@ -4,10 +4,11 @@ import com.example.nbe233team9.domain.chat.entity.ChatParticipant
 import com.example.nbe233team9.domain.chat.entity.ChatRoom
 import com.example.nbe233team9.domain.chat.repository.ChatParticipantRepository
 import com.example.nbe233team9.domain.chat.repository.ChatRoomRepository
+import com.example.nbe233team9.domain.user.model.Role
 import com.example.nbe233team9.domain.user.model.User
 import com.example.nbe233team9.domain.user.repository.UserRepository
+import com.example.nbe233team9.global.constants.ChatConstants
 import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_EMAIL
-import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_ID
 import com.example.nbe233team9.global.constants.ChatConstants.SYSTEM_USER_NAME
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.redis.core.RedisTemplate
@@ -51,8 +52,20 @@ class ChatServiceUtil(
      * 시스템 메시지를 전송하기 위한 시스템 사용자 객체 생성
      * @return 시스템 사용자 (User 객체)
      */
-    fun getSystemUser(): User =
-        User(id = SYSTEM_USER_ID, name = SYSTEM_USER_NAME, email = SYSTEM_USER_EMAIL)
+    fun getSystemUser(): User {
+        return userRepository.findByEmail(ChatConstants.SYSTEM_USER_EMAIL)
+            .orElseGet {
+                /// SYSTEM_USER_EMAIL이 없으면 새로운 User 객체를 생성하고 DB에 저장
+                val systemUser = User(
+                    name = ChatConstants.SYSTEM_USER_NAME,
+                    email = ChatConstants.SYSTEM_USER_EMAIL,
+                    role = Role.SYSTEM
+                )
+                userRepository.save(systemUser)
+                systemUser
+            }
+    }
+
 
 
     /**

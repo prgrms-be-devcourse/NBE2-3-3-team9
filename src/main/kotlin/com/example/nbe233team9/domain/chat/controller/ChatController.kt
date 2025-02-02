@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import java.security.Principal
 
 @Tag(name = "chat", description = "채팅 API")
 @RestController
@@ -37,10 +38,10 @@ class ChatController(
     fun sendMessage(
         @DestinationVariable roomId: String,
         requestDTO: ChatMessageRequestDTO,
-        @AuthenticationPrincipal userDetails: CustomUserDetails
+        principal: Principal
     ) {
         try {
-            val senderId = userDetails.getUserId()
+            val senderId = principal.name.toLong()
 
             // 메시지 저장 및 발행
             val savedMessage = chatMessageService.sendMessage(senderId, requestDTO)

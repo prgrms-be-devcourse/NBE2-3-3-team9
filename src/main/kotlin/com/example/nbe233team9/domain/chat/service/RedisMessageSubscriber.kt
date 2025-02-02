@@ -4,6 +4,7 @@ import com.example.nbe233team9.domain.chat.dto.ChatMessageResponseDTO
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.stereotype.Component
 
 /**
  * Redis에서 메시지를 구독하고,
@@ -11,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate
  * WebSocket을 통해 클라이언트로 전달함
  * (redis와 WebSocket 사이에서 메시지 브로커 역할을 함)
  */
+@Component
 class RedisMessageSubscriber (
     private val objectMapper: ObjectMapper, // JSON 역직렬화
     private val messagingTemplate: SimpMessagingTemplate // WebSocket 메시지 전송

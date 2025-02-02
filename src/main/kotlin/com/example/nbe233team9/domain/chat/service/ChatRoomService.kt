@@ -231,13 +231,16 @@ class ChatRoomService(
             chatServiceUtil.getUserStatus(it.id.toString())
         } ?: "disconnected"
 
+        val lastMessage = chatRoom.lastMessage ?: "메시지가 없습니다."
+        val lastMessageTime = chatRoom.lastMessageTime ?: chatRoom.createdAt
+
         return ChatRoomResponseDTO(
             roomId = chatRoom.roomId,
             roomName = chatRoom.roomName,
             description = chatRoom.description,
             occupied = chatRoom.occupied,
-            lastMessage = chatRoom.lastMessage!!,
-            lastMessageTime = chatRoom.lastMessageTime!!,
+            lastMessage = lastMessage,
+            lastMessageTime = lastMessageTime,
             createdAt = chatRoom.createdAt,
             opponentId = opponent?.id,
             opponentName = opponent?.name ?: "상대방 없음",

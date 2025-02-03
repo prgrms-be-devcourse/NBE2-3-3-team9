@@ -4,6 +4,9 @@ import com.example.nbe233team9.domain.schedule.model.PeriodicSchedule
 import com.example.nbe233team9.domain.schedule.model.SingleSchedule
 import com.example.nbe233team9.domain.user.model.User
 import io.lettuce.core.dynamic.annotation.Param
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -11,7 +14,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-interface SingleScheduleRepository : JpaRepository<SingleSchedule, Long> {
+interface SingleScheduleRepository : JpaRepository<SingleSchedule, Long>, SingleScheduleRepositoryCustom {
     @Query("select s from SingleSchedule s where s.user = :user")
     fun findSingleSchedulesByUser(user: User): List<SingleSchedule>
 
@@ -30,5 +33,4 @@ interface SingleScheduleRepository : JpaRepository<SingleSchedule, Long> {
         @Param("now") now: LocalDateTime,
         @Param("tenMinutesLater") tenMinutesLater: LocalDateTime
     ): List<SingleSchedule>
-
 }

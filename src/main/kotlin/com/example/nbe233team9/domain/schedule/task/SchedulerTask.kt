@@ -1,6 +1,5 @@
 package com.example.nbe233team9.domain.schedule.task
 
-import com.example.nbe233team9.domain.schedule.model.SingleSchedule
 import com.example.nbe233team9.domain.schedule.repository.SingleScheduleRepository
 import com.example.nbe233team9.domain.schedule.service.MessageService
 import com.example.nbe233team9.domain.schedule.service.RedisService
@@ -16,21 +15,32 @@ class SchedulerTask(
     private val redisService: RedisService
 ) {
 
-    @Scheduled(fixedRate = 60000 * 5)
+    @Scheduled(fixedRate = 10000 ) // 5분마다 실행
     fun requestMessage() {
-        val lists: List<SingleSchedule> = singleScheduleRepository.findSchedulesWithinNextTenMinutes(
+        val schedules = singleScheduleRepository.findSchedulesWithinNextTenMinutes(
             LocalDateTime.now(),
             LocalDateTime.now().plusMinutes(10)
         )
 
-        for (schedule in lists) {
-            val redisKey = String.format("user.%s.access_token", schedule.user.id)
-            val accessToken: String? = redisService.getValues(redisKey)
-            if (accessToken != null) {
-                messageService.requestMessage(accessToken!!, schedule)
-                schedule.notificatedAt = LocalDateTime.now()
-                singleScheduleRepository.save(schedule)
+        // 전송할 일정 목록 필터링 및 처리
+        val scheduleIds = schedules
+            .filter { schedule ->
+                val redisKey = "user.${schedule.user.id}.access_token"
+                redisService.getValues(redisKey) != null
             }
+            .onEach { schedule ->
+                val redisKey = "user.${schedule.user.id}.access_token"
+                val accessToken = redisService.getValues(redisKey)
+                if (accessToken != null) {
+                    messageService.requestMessage(accessToken, schedule)
+                }
+            }
+            .map { it.id }
+
+        // Batch Update 실행
+        if (scheduleIds.isNotEmpty()) {
+            singleScheduleRepository.updateNotificationTime(scheduleIds, LocalDateTime.now())
         }
     }
 }
+

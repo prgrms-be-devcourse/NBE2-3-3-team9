@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-interface SingleScheduleRepository : JpaRepository<SingleSchedule, Long>, SingleScheduleRepositoryCustom {
+interface SingleScheduleRepository : JpaRepository<SingleSchedule, Long> {
     @Query("select s from SingleSchedule s where s.user = :user")
     fun findSingleSchedulesByUser(user: User): List<SingleSchedule>
 

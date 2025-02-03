@@ -4,6 +4,7 @@ import com.example.nbe233team9.domain.schedule.repository.SingleScheduleReposito
 import com.example.nbe233team9.domain.schedule.service.MessageService
 import com.example.nbe233team9.domain.schedule.service.RedisService
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.awt.print.Pageable
@@ -17,7 +18,7 @@ class SchedulerTask(
     private val redisService: RedisService
 ) {
 
-    @Scheduled(fixedRate = 10000) // 5분마다 실행
+    @Scheduled(fixedRate = 60000 * 5) // 5분마다 실행
     fun requestMessage() {
         var page = 0
         val pageSize = 50
@@ -26,7 +27,7 @@ class SchedulerTask(
             val schedulePage = singleScheduleRepository.findSchedulesWithinNextTenMinutes(
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(10),
-                PageRequest.of(page, pageSize)
+                PageRequest.of(page, pageSize, Sort.by("startDatetime").ascending())
             )
 
             val scheduleIds = schedulePage.content

@@ -41,6 +41,7 @@ class SecurityConfig(
                     ).permitAll()
                     .requestMatchers("/api/auth/kakao/**").permitAll()
                     .requestMatchers("/api/**").permitAll()
+                    .requestMatchers("/back/**").permitAll()
                     .requestMatchers(
                         "/chat-socket/**",
                         "/topic/**",

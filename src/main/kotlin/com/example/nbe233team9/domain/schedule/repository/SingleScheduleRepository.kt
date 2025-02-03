@@ -31,6 +31,7 @@ interface SingleScheduleRepository : JpaRepository<SingleSchedule, Long> {
     SELECT s 
     FROM SingleSchedule s 
     WHERE s.startDatetime BETWEEN :now AND :tenMinutesLater
+    AND s.notificatedAt IS NULL
 """)
     fun findSchedulesWithinNextTenMinutes(
         @Param("now") now: LocalDateTime,

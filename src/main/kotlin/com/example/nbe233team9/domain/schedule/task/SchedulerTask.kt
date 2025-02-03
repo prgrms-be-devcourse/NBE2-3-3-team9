@@ -24,7 +24,6 @@ class SchedulerTask(
         var page = 0
         val pageSize = 1000
         do {
-            // 일정 페이징 조회
             val schedulePage = singleScheduleRepository.findSchedulesWithinNextTenMinutes(
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(10),
@@ -50,7 +49,6 @@ class SchedulerTask(
                 singleScheduleBatchUpdateRepository.updateNotificationTime(scheduleIds, LocalDateTime.now())
             }
 
-            page++
         } while (schedulePage.hasNext())  // 다음 페이지가 있으면 반복
     }
 }

@@ -60,7 +60,7 @@ class ChatController(
      */
     @Operation(summary = "채팅방 메시지 로그 조회")
     @GetMapping("/rooms/{roomId}/messages")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     fun getMessagesByRoom(@PathVariable roomId: String): ApiResponse<List<ChatMessageResponseDTO>> {
         return ApiResponse.ok(chatMessageService.getMessagesByRoom(roomId))
     }

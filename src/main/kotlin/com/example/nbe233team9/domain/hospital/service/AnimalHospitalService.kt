@@ -50,7 +50,7 @@ class AnimalHospitalService(
     fun fetchAndSaveCoordinates() {
         val hospitals = animalHospitalRepository.findAll()
         hospitals.forEach { hospital ->
-            val address = hospital.rdnWhlAddr ?: return@forEach
+            val address = hospital.rdnWhlAddr?.split(",")?.firstOrNull()?.trim() ?: return@forEach // ,(쉼표) 이후의 문자열(주소)까지 카카오맵 api에서 검색을 하기때문에 쉼표 이전까지의 문자열검색으로 수정.
 
             val url = "https://dapi.kakao.com/v2/local/search/address.json?query=$address"
             val headers = HttpHeaders().apply { set("Authorization", "KakaoAK $kakaoClientId") }
